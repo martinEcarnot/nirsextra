@@ -1,0 +1,20 @@
+Package: nirsextra
+Title: Misc. function for NIRS & chemometrics
+Version: 0.0.0.9000
+Authors@R: person(given = "Martin",
+           family = "Ecarnot",
+           role = c("aut", "cre"),
+           email = "martin.ecarnot@inrae.fr",
+           comment = c(ORCID = "YOUR-ORCID-ID"))
+Description: Misc. function for NIRS & chemometrics. Created from https://thinkr.fr/creer-package-r-quelques-minutes/
+License: Toutegratos
+Encoding: UTF-8
+LazyData: true
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.1.1
+Imports: 
+    rnirs,
+    dplyr,
+    FactoMineR,
+    R.utils,
+    stats
