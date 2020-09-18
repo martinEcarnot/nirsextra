@@ -1,10 +1,11 @@
-PE_read_dir <- function(d)
+PE_read_dir <- function(d,nlo)
 {
   # Reading PE files on a directory
   #
 
+  if (missing(nlo)) {nlo=3001}
   l=Sys.glob(file.path(d,"*.sp"))
-  x=matrix(, nrow = length(l), ncol = 3001)
+  x=matrix(, nrow = length(l), ncol = nlo)
 
   for (i in 1:length(l)) {
     sp=readSP.pe(l[i])
