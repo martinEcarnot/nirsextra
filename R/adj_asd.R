@@ -12,11 +12,11 @@ for (i in 1:length(iadj)) {
 	Y=Xi[, x]
 	my=t(colMeans(t(Y)))
 
-	sx=var(x) 
+	sx=var(x)
 	mx=mean(x)
 	b=cov(x,t(Y))/sx # Ajustement linaire.
 	b0=my-b*mx  # Ajustement linaire.
-	dif=Xi[,iadj[i]+1]-(b0+b*(iadj[i]+1)) 
+	dif=Xi[,iadj[i]+1]-(b0+b*(iadj[i]+1))
 	loremp=(iadj[i]+1):dim(Xi)[2]
 	Xi[,loremp]=Xi[,loremp]-kronecker(matrix(1,1,dim(Xi)[2]-iadj[i]),t(dif))  # On utilise kronecker pour remplacer repmat
 }
