@@ -1,13 +1,13 @@
-fitcv_mec <- function (X, Y, fun, segm, print = FALSE, ...) 
+fitcv_mec <- function (X, Y, fun, segm, print = FALSE, ...)
 {
   fun <- match.fun(FUN = fun)
   X <- as.matrix(X)
   n <- nrow(X)
-  if (is.factor(Y) | is.vector(Y)) 
+  if (is.factor(Y) | is.vector(Y))
     Y <- as.matrix(Y, row = FALSE)
   nvar <- ncol(Y)
   colnam.Y <- colnames(Y)
-  if (is.null(colnam.Y)) 
+  if (is.null(colnam.Y))
     colnam.Y <- paste("y", 1:nvar, sep = "")
   nrep <- length(segm)
   r <- fit <- y <- vector("list", length = nrep)
@@ -17,16 +17,17 @@ fitcv_mec <- function (X, Y, fun, segm, print = FALSE, ...)
     zr <- zfit <- zy <- vector("list", length = nsegm)
     for (j in 1:nsegm) {
       s <- sort(listsegm[[j]])
-      if (print) 
-        cat("\n\n------------------------- Repetition: ", 
-            i, "  Segment: ", j, "\n\nRow numbers of X to predict: \ns =", 
+      if (print)
+        cat("\n\n------------------------- Repetition: ",
+            i, "  Segment: ", j, "\n\nRow numbers of X to predict: \ns =",
             s, "\n(The models are fitted on X[-s, ], Y[-s].)\n\n")
-      fm <- fun(X[-s, , drop = FALSE], Y[-s, , drop = FALSE], 
+      fm <- fun(X[-s, , drop = FALSE], Y[-s, , drop = FALSE],
                 X[s, , drop = FALSE], Y[s, , drop = FALSE], ...)
+
       zy[[j]] <- fm$y
       zfit[[j]] <- fm$fit
       zr[[j]] <- fm$r
-      zr[[j]]$segm <- zfit[[j]]$segm <- zy[[j]]$segm <- rep(j, 
+      zr[[j]]$segm <- zfit[[j]]$segm <- zy[[j]]$segm <- rep(j,
                                                             length(s))
     }
     y[[i]] <- setDF(rbindlist(zy))
