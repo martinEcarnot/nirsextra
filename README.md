@@ -1,7 +1,3 @@
----
-title: "README page for nirsextra"
-output: html_notebook
----
 
 ## Somes complementary functions for chemometrics.
 

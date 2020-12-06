@@ -26,11 +26,13 @@ for (i in 1:nfac) {
   disp=matrix(nrow=nlev,ncol=0)
   cname=character()
   for (j in 1:nlevels(fac1)){
+
     lev1=fac1==levels(fac1)[j]
     t=table(Classes_Obs=obs[lev1],Classes_pred=pred[lev1])
     disp=cbind(disp,t,make_pbc(t,nlev))
     cname=c(cname,"Pred","",levels(fac1)[j],"")  # c(cname,"Classes_pred","",levels(fac1)[j],"")
   }
+  # browser()
   rownames(disp)=c("Obs",rep("",nlev-1))  # c("Classes_Obs",rep("",nlev-1))
   colnames(disp)=cname #rep(c("Classes_pred","","",""),nlevels(fac1))
   cat("\n\nFacteur: ",colnames(fac)[i]," \n\n")
