@@ -18,9 +18,9 @@ if (nargin==1 && strcmp(args[[1]], 'options')) {
     opt$confl<-0.95
     model<-opt
     return(model)
-} elseif (nargin==2) {
-    X<-varargin{1}
-    desmatrix<-varargin{2}
+} else if (nargin==2) {
+    # X<-varargin[[1]]
+    # desmatrix<-varargin{2}
     opt$preproc<-'none'
     opt$reducedmodel<-'standard'
     opt$permtest<-'on'
@@ -32,10 +32,10 @@ if (nargin==1 && strcmp(args[[1]], 'options')) {
     opt$nboot<-1000
     opt$plots<-'on'
     opt$confl<-0.95
-} elseif (nargin==3) {
-    X<-varargin{1}
-    desmatrix<-varargin{2}
-    opt<-varargin{3}
+} else if (nargin==3) {
+    # X<-varargin[[1]]
+    # desmatrix<-varargin{2}
+    # opt<-varargin{3}
  } #
 
 
@@ -59,10 +59,10 @@ ldpatrices = createdesign(dmain)
 Xd<-Xp
 
 for ( i in 1 : length(dmatrices)) {
-    Xeff<-dmatrices{i}*pinv(dmatrices{i})*Xd
+    Xeff<-dmatrices[[i]]*pinv(dmatrices[[i]])*Xd
     ssqEff<-sum(sum(Xeff.^2))
     Xd<-Xd-Xeff
-    l<-strtrim(deslabels{i})
+    l<-strtrim(deslabels[[i]])
     eval(paste0('model.X', l,'.EffectMatrix<-Xeff'))
     eval(paste0('model.X', l,'.EffectSSQ<-ssqEff'))
 
@@ -75,9 +75,9 @@ for ( i in 1 : length(dmatrices)) {
         eval(paste0('model.X', l,'.EffectExplVar<-expVar'))
      } #
 
-    eval(paste0('model.X', l,'.DesignMatrix<-dmatrices{i}'))
-    eval(paste0('model.X', l,'.DesignTerms<-desterms{i}'))
-    eval(paste0('model.X', l,'.EffectLabel<-strtrim(deslabels{i})'))
+    eval(paste0('model.X', l,'.DesignMatrix<-dmatrices[[i]]'))
+    eval(paste0('model.X', l,'.DesignTerms<-desterms[[i]]'))
+    eval(paste0('model.X', l,'.EffectLabel<-strtrim(deslabels[[i]])'))
     eval(paste0('model.X', l,'.TermOrder<-desorder(i)'))
 
  } #
@@ -89,16 +89,16 @@ model$XRes$EffectLabel<-'Res'
 model$XRes$TermOrder<-max(desorder)+1
 
 for ( i in 2 : length(dmatrices)) {
-    l<-strtrim(deslabels{i})
+    l<-strtrim(deslabels[[i]])
 
     if (ischar(opt.reducedmodel) && strcmp(opt.reducedmodel, 'standard')) {
         remfact<-desterms(c(2:i-1,i+1:end))
     } else {
-        remfact<-opt.reducedmodel{i}
+        remfact<-opt.reducedmodel[[i]]
      } #
     Xx<-model.Xdata.CenteredData
     for ( j in 1 : length(remfact)) {
-        m<-strtrim(char(64+remfact{j}))
+        m<-strtrim(char(64+remfact[[j]]))
         eval(paste0('Xx<-Xx-model.X',m,'.EffectMatrix'))
      } #
     eval(paste0('model.X', l,'.ReducedMatrix<-Xx'))
@@ -133,7 +133,7 @@ ns<-nrow(designmat)
 nfact<-ncol(designmat)
 
 nfact<-length(designmat)
-ns<-nrow(designmat{1})
+ns<-nrow(designmat[[1]])
 
 indmat<-fullfact(repmat(2,1,nfact))
 nmat<-size(indmat,1)
@@ -148,17 +148,17 @@ for ( i in 1 : nmat) {
     dm<-matrix(1,ns,1)
     for ( j in 1 : nfact) {
         if (indmat(i,j)==1) {
-            effmat<-designmat{j}
+            effmat<-designmat[[j]]
         }else{
             effmat<-matrix(1,ns,1)
          } #
         dm<-kron(dm,effmat)
         dm<-dm(1:ns+1:end) #,:)
      } #
-    dmatrices{i}<-dm
-    desterms{i}<-find(indmat(i,)==1)
-    deslabels{i}<-char(64+find(indmat(i,)==1))
-    desorder(i)<-length(desterms{i})
+    dmatrices[[i]]<-dm
+    desterms[[i]]<-find(indmat(i,)==1)
+    deslabels[[i]]<-char(64+find(indmat(i,)==1))
+    desorder(i)<-length(desterms[[i]])
 
 
  } #
@@ -173,7 +173,7 @@ desterms<-desterms(newindex)
 dmatrices<-dmatrices(newindex)
 desorder<-desorder(newindex)
 deslabels<-t(cellstr(deslabels))
-# deslabels{1}<-'Mean'
+# deslabels[[1]]<-'Mean'
 deslabels[1]<-'Mean'
 
 return(list(dmatrices,desterms, deslabels, desorder))
@@ -207,19 +207,19 @@ pmodel
 pmodel<-ascamodel
 dlab<-ascamodel.TermLabels
 
-if strcmp(ascamodel.Options.permtest, 'on') {
+if  (ascamodel.Options.permtest=='on') {      #  strcmp(ascamodel.Options.permtest, 'on') {
 
     signfacts<-cell(length(dlab)-1,1)
     sc<-0
 }else{
-    signfacts<-[]
+    signfacts<-NULL
  } #
 
 
 for ( i in 2 : length(dlab)) {
-    l<-strtrim(dlab{i})
-    if strcmp(ascamodel.Options.permtest, 'on') {
-        if (ischar(ascamodel.Options.permfacts) && strcmp(ascamodel.Options.permfacts, 'all')) {
+    l<-strtrim(dlab[[i]])
+    if (ascamodel.Options.permtest == 'on') {  # strcmp(ascamodel.Options.permtest, 'on') {
+        if (ischar(ascamodel.Options.permfacts) && ascamodel.Options.permfacts== 'all') {
 
             eval(['Xr<-ascamodel.X', l, '.ReducedMatrix '])
             eval(['Dr<-ascamodel.X', l, '.DesignMatrix '])
@@ -291,7 +291,7 @@ smodel<-ascamodel
 dlab<-ascamodel.TermLabels
 
 for ( i in 2 : length(dlab)) {
-    l<-strtrim(dlab{i})
+    l<-strtrim(dlab[[i]])
     eval(['Xr<-ascamodel.X', l, '.EffectMatrix '])
     eval(['ssqr<-ascamodel.X', l, '.EffectSSQ '])
 
@@ -321,25 +321,25 @@ dlab<-ascamodel.TermLabels
 Xd<-ascamodel.Xdata.CenteredData
 
 for ( i in 2 : length(dlab)) {
-    l<-strtrim(dlab{i})
+    l<-strtrim(dlab[[i]])
 
     if (strcmp(ascamodel.Options.bootstrap, 'all')) {
         if (strcmp(ascamodel.Options.bootmatrix, 'original')) {
 
             Xd<-ascamodel.Xdata.CenteredData
-        }elseif (strcmp(ascamodel.Options.bootmatrix, 'reduced')) {
+        }else if (strcmp(ascamodel.Options.bootmatrix, 'reduced')) {
             eval(['Xd<-ascamodel.X', l, '.ReducedMatrix '])
          } #
 
         eval(['Dd<-ascamodel.X', l, '.DesignMatrix '])
         eval(['Pd<-ascamodel.X', l, '.SCA.Model.Loadings '])
         [Pb, Pbcrit, svars]<-bootload(Xd,Dd, Pd, ascamodel.Options.confl, ascamodel.Options.nboot)
-    } elseif (strcmp(ascamodel.Options.bootstrap, 'signif')) {
+    } else if (strcmp(ascamodel.Options.bootstrap, 'signif')) {
         if (ismember(l, ascamodel.SignificantTerms)) {
             if (strcmp(ascamodel.Options.bootmatrix, 'original')) {
 
                 Xd<-ascamodel.Xdata.CenteredData
-            } elseif (strcmp(ascamodel.Options.bootmatrix, 'reduced')) {
+            } else if (strcmp(ascamodel.Options.bootmatrix, 'reduced')) {
 
                 eval(['Xd<-ascamodel.X', l, '.ReducedMatrix '])
              } #
@@ -353,7 +353,7 @@ for ( i in 2 : length(dlab)) {
          } #
 
 
-    } elseif (strcmp(ascamodel.Options.bootstrap, 'off')) {
+    } else if (strcmp(ascamodel.Options.bootstrap, 'off')) {
         Pb<-[]
         Pbcrit<-[]
         svars<-[]
@@ -411,7 +411,7 @@ Pb<-sort(Pb)
 Pbcrit<-Pb([ceil(ll*nboot) ceil(sl*nboot)],:,:)
 
 for ( i in 1 : length(svars)) {
-    svars{i}<-find(sign(squeeze(Pbcrit(1,:,i).*Pbcrit(2,:,i)))==1)
+    svars[[i]]<-find(sign(squeeze(Pbcrit(1,:,i).*Pbcrit(2,:,i)))==1)
  } #
 
 return(list([Pb, Pbcrit,svars]))
