@@ -1,7 +1,76 @@
 asca <-function(...)  {
 
+library(MASS)
+
   X=dat$x
   desmatrix=fact
+
+  #########################
+  gendmat <-function(designmat) {
+
+    ns<-nrow(designmat)
+    nfact<-ncol(designmat)
+    dmain<- list() #data.frame(nrow=1,ncol=nfact)  # dmain<-cell(1,nfact)
+
+    for (i in 1:nfact) {
+      lev<-unique(designmat[,i])
+      nl<-length(lev)
+      dmat<-matrix(0,ns,nl-1)
+      for (j in 1 : nl-1) {
+        dmat[designmat[,i]==lev[j],j] <- 1
+      } #
+      dmat[designmat[,i]==lev[nl],]<--1
+      dmain[[i]]<-dmat
+    } #
+    return(dmain)
+  }
+
+####################
+  createdesign <-function(designmat) {
+
+    ns<-nrow(designmat)
+    nfact<-ncol(designmat)
+    nfact<-length(designmat)
+    ns<-nrow(designmat[[1]])
+
+    indmat<-expand.grid(replicate(nfact, 1:2, simplify=FALSE))
+    nmat<-nrow(indmat)
+    dmatrices<- vector("list", nmat)
+    desterms<-vector("list", nmat)
+    deslabels<-vector("list", nmat)
+    desorder<-matrix(0,nrow=nmat,ncol=1)
+
+    for ( i in 1 : nmat) {
+      dm<-matrix(1,nrow=ns,ncol=1)
+      for ( j in 1 : nfact) {
+        if (indmat[i,j]==1) {
+          effmat<-designmat[[j]]
+        }else{
+          effmat<-matrix(1,nrow=ns,ncol=1)
+        }
+        dm<-kronecker(dm,effmat)
+        dm<-dm[seq(1,length(dm),ns+1)]
+      }
+      dmatrices[[i]]<-dm
+      desterms[[i]]<-which(indmat[i,]==1)
+      deslabels[[i]]<-paste0(LETTERS[which(indmat[i,]==1)],collapse ="")
+      desorder[i]<-length(desterms[[i]])
+    }
+
+    #Sorting according to increasing order of interactions
+    newindex=order(nchar(unlist(deslabels)), unlist(deslabels))
+    deslabels = unlist(deslabels)[newindex]
+
+    desterms<-desterms[newindex]
+    dmatrices<-dmatrices[newindex]
+    desorder<-desorder[newindex]
+    # deslabels<-t(cellstr(deslabels))
+    deslabels[1]<-'Mean'
+
+    return(list(dmatrices=dmatrices,desterms=desterms, deslabels=deslabels, desorder=desorder))
+  }
+
+  ############################"
 
   args = list(...)
   # nargin <- length(as.list(match.call())) -1
@@ -55,38 +124,41 @@ Xdata=list(PreprData=I(Xp),TotalSSQ=sum(sum(Xp^2)))
 model=list(Xdata=Xdata,Design=desmatrix)
 
 dmain<-gendmat(desmatrix)
-#[dmatrices,desterms,deslabels, desorder]<-createdesign(dmain)
-ldpatrices = createdesign(dmain)
+ldmatrices = createdesign(dmain)
+dmatrices=ldmatrices$dmatrices
+desterms=ldmatrices$desterms
+deslabels=ldmatrices$deslabels
+desorder=ldmatrices$desorder
 
 Xd<-Xp
 
 for ( i in 1 : length(dmatrices)) {
-    Xeff<-dmatrices[[i]]*pinv(dmatrices[[i]])*Xd
-    ssqEff<-sum(sum(Xeff.^2))
+    Xeff<-dmatrices[[i]] %*% ginv(dmatrices[[i]]) %*%Xd
+    ssqEff<-sum(sum(Xeff^2))
     Xd<-Xd-Xeff
-    l<-strtrim(deslabels[[i]])
-    eval(paste0('model.X', l,'.EffectMatrix<-Xeff'))
-    eval(paste0('model.X', l,'.EffectSSQ<-ssqEff'))
+    l<-deslabels[[i]]
+    eval(parse(text=paste0('model$X', l,'$EffectMatrix<-Xeff')))
+    eval(parse(text=paste0('model$X', l,'$EffectSSQ<-ssqEff')))
 
     if (i==1) {
-        ssqtot<-sum(sum(Xd.^2))
-        model.Xdata.CenteredData<-Xd
-        model.Xdata.CenteredSSQ<-ssqtot
+        ssqtot<-sum(sum(Xd^2))
+        model$Xdata$CenteredData<-Xd
+        model$Xdata$CenteredSSQ<-ssqtot
     } else {
         expVar<-100*(ssqEff/ssqtot)
-        eval(paste0('model.X', l,'.EffectExplVar<-expVar'))
+        eval(parse(text=paste0('model$X', l,'.EffectExplVar<-expVar')))
      } #
 
-    eval(paste0('model.X', l,'.DesignMatrix<-dmatrices[[i]]'))
-    eval(paste0('model.X', l,'.DesignTerms<-desterms[[i]]'))
-    eval(paste0('model.X', l,'.EffectLabel<-strtrim(deslabels[[i]])'))
-    eval(paste0('model.X', l,'.TermOrder<-desorder(i)'))
+    eval(parse(text=paste0('model$X', l,'.DesignMatrix<-dmatrices[[i]]')))
+    eval(parse(text=paste0('model$X', l,'.DesignTerms<-desterms[[i]]')))
+    eval(parse(text=paste0('model$X', l,'.EffectLabel<-deslabels[[i]]')))
+    eval(parse(text=paste0('model$X', l,'.TermOrder<-desorder[i]')))
 
  } #
 
 model$XRes$EffectMatrix<-Xd
 model$XRes$EffectSSQ<-sum(sum(Xd.^2))
-model$XRes$EffectExplVar<-100*(model.XRes.EffectSSQ/ssqtot)
+model$XRes$EffectExplVar<-100*(model$XRes$EffectSSQ/ssqtot)
 model$XRes$EffectLabel<-'Res'
 model$XRes$TermOrder<-max(desorder)+1
 
@@ -101,9 +173,9 @@ for ( i in 2 : length(dmatrices)) {
     Xx<-model.Xdata.CenteredData
     for ( j in 1 : length(remfact)) {
         m<-strtrim(char(64+remfact[[j]]))
-        eval(paste0('Xx<-Xx-model.X',m,'.EffectMatrix'))
+        eval(parse(text=paste0('Xx<-Xx-model.X',m,'.EffectMatrix')))
      } #
-    eval(paste0('model.X', l,'.ReducedMatrix<-Xx'))
+    eval(parse(text=paste0('model$X', l,'.ReducedMatrix<-Xx')))
  } #
 
 model.TermLabels<-deslabels
@@ -127,80 +199,10 @@ model<-ascaboot(model)
 
 
 
-#################################
-
-createdesign <-function(designmat) {
-
-ns<-nrow(designmat)
-nfact<-ncol(designmat)
-
-nfact<-length(designmat)
-ns<-nrow(designmat[[1]])
-
-indmat<-expand.grid(replicate(nfact, 1:2, simplify=FALSE))
-nmat<-nrow(indmat)
-dmatrices<-cell(1,nmat)
-desterms<-cell(1,nmat)
-deslabels<-cell(1,nmat)
-desorder<-matrix(0,nmat,1)
 
 
 
-for ( i in 1 : nmat) {
-    dm<-matrix(1,ns,1)
-    for ( j in 1 : nfact) {
-        if (indmat(i,j)==1) {
-            effmat<-designmat[[j]]
-        }else{
-            effmat<-matrix(1,ns,1)
-         } #
-        dm<-kron(dm,effmat)
-        dm<-dm(1:ns+1:end) #,:)
-     } #
-    dmatrices[[i]]<-dm
-    desterms[[i]]<-find(indmat(i,)==1)
-    deslabels[[i]]<-char(64+find(indmat(i,)==1))
-    desorder(i)<-length(desterms[[i]])
 
-
- } #
-
-deslabels<-sort(char(deslabels),2)
-
-#Sorting according to increasing order of interactions
-#[deslabels, newindex]<-sortrows(deslabels)
-ldeslabels = sortrows(deslabels)
-
-desterms<-desterms(newindex)
-dmatrices<-dmatrices(newindex)
-desorder<-desorder(newindex)
-deslabels<-t(cellstr(deslabels))
-# deslabels[[1]]<-'Mean'
-deslabels[1]<-'Mean'
-
-return(list(dmatrices,desterms, deslabels, desorder))
-}
-
-
-#########################
-gendmat <-function(designmat) {
-
-ns<-nrow(designmat)
-nfact<-ncol(designmat)
-dmain<- list() #data.frame(nrow=1,ncol=nfact)  # dmain<-cell(1,nfact)
-
-for (i in 1:nfact) {
-    lev<-unique(designmat[,i])
-    nl<-length(lev)
-    dmat<-matrix(0,ns,nl-1)
-    for (j in 1 : nl-1) {
-        dmat[designmat[,i]==lev[j],j] <- 1
-     } #
-    dmat[designmat[,i]==lev[nl],]<--1
-    dmain[[i]]<-dmat
- } #
-return(dmain)
-}
 
 #############################################
 ascaptest <-function(ascamodel) {
