@@ -49,7 +49,7 @@ library(MASS)
           effmat<-matrix(1,nrow=ns,ncol=1)
         }
         dm<-kronecker(dm,effmat)
-        dm<-dm[seq(1,length(dm),ns+1)]
+        dm<-dm[seq(1,nrow(dm),ns+1),]
       }
       dmatrices[[i]]<-dm
       desterms[[i]]<-which(indmat[i,]==1)
@@ -146,13 +146,13 @@ for ( i in 1 : length(dmatrices)) {
         model$Xdata$CenteredSSQ<-ssqtot
     } else {
         expVar<-100*(ssqEff/ssqtot)
-        eval(parse(text=paste0('model$X', l,'.EffectExplVar<-expVar')))
+        eval(parse(text=paste0('model$X', l,'$EffectExplVar<-expVar')))
      } #
 
-    eval(parse(text=paste0('model$X', l,'.DesignMatrix<-dmatrices[[i]]')))
-    eval(parse(text=paste0('model$X', l,'.DesignTerms<-desterms[[i]]')))
-    eval(parse(text=paste0('model$X', l,'.EffectLabel<-deslabels[[i]]')))
-    eval(parse(text=paste0('model$X', l,'.TermOrder<-desorder[i]')))
+    eval(parse(text=paste0('model$X', l,'$DesignMatrix<-dmatrices[[i]]')))
+    eval(parse(text=paste0('model$X', l,'$DesignTerms<-desterms[[i]]')))
+    eval(parse(text=paste0('model$X', l,'$EffectLabel<-deslabels[[i]]')))
+    eval(parse(text=paste0('model$X', l,'$TermOrder<-desorder[i]')))
 
  } #
 
@@ -163,19 +163,19 @@ model$XRes$EffectLabel<-'Res'
 model$XRes$TermOrder<-max(desorder)+1
 
 for ( i in 2 : length(dmatrices)) {
-    l<-strtrim(deslabels[[i]])
+    l<-deslabels[[i]]
 
-    if (ischar(opt.reducedmodel) && strcmp(opt.reducedmodel, 'standard')) {
-        remfact<-desterms(c(2:i-1,i+1:end))
+    if (is.character(opt$reducedmodel) && opt$reducedmodel=='standard') {
+        remfact<-desterms[c(2:i-1,i+1:length(desterms))]
     } else {
-        remfact<-opt.reducedmodel[[i]]
+        remfact<-opt$reducedmodel[[i]]
      } #
-    Xx<-model.Xdata.CenteredData
+    Xx<-model$Xdata$CenteredData
     for ( j in 1 : length(remfact)) {
-        m<-strtrim(char(64+remfact[[j]]))
-        eval(parse(text=paste0('Xx<-Xx-model.X',m,'.EffectMatrix')))
+        m<-LETTERS[remfact[[j]]]
+        eval(parse(text=paste0('Xx<-Xx-model$X',m,'$EffectMatrix')))
      } #
-    eval(parse(text=paste0('model$X', l,'.ReducedMatrix<-Xx')))
+    eval(parse(text=paste0('model$X', l,'$ReducedMatrix<-Xx')))
  } #
 
 model.TermLabels<-deslabels
