@@ -209,9 +209,9 @@ ascaptest <-function(ascamodel) {
 pmodel
 
 pmodel<-ascamodel
-dlab<-ascamodel.TermLabels
+dlab<-ascamodel$TermLabels
 
-if  (ascamodel.Options.permtest=='on') {      #  strcmp(ascamodel.Options.permtest, 'on') {
+if  (ascamodel$Options$permtest=='on') {      #  strcmp(ascamodel.Options.permtest, 'on') {
 
     signfacts<-cell(length(dlab)-1,1)
     sc<-0
@@ -222,54 +222,54 @@ if  (ascamodel.Options.permtest=='on') {      #  strcmp(ascamodel.Options.permte
 
 for ( i in 2 : length(dlab)) {
     l<-strtrim(dlab[[i]])
-    if (ascamodel.Options.permtest == 'on') {  # strcmp(ascamodel.Options.permtest, 'on') {
-        if (ischar(ascamodel.Options.permfacts) && ascamodel.Options.permfacts== 'all') {
+    if (ascamodel$Options$permtest == 'on') {  # strcmp(ascamodel$Options$permtest, 'on') {
+        if (ischar(ascamodel$Options$permfacts) && ascamodel$Options$permfacts== 'all') {
 
-            eval(paste0('Xr<-ascamodel.X', l, '.ReducedMatrix '))
-            eval(paste0('Dr<-ascamodel.X', l, '.DesignMatrix '))
-            ssqp<-ptest(Xr,Dr, ascamodel.Options.nperm)
-            eval(paste0('seff<-ascamodel.X', l, '.EffectSSQ '))
-            p<-length(find(ssqp>=seff))./ascamodel.Options.nperm
+            eval(paste0('Xr<-ascamodel$X', l, '$ReducedMatrix '))
+            eval(paste0('Dr<-ascamodel$X', l, '$DesignMatrix '))
+            ssqp<-ptest(Xr,Dr, ascamodel$Options$nperm)
+            eval(paste0('seff<-ascamodel$X', l, '$EffectSSQ '))
+            p<-length(find(ssqp>=seff))/ascamodel$Options$nperm
             if (p<<-0.05) {
                 sc<-sc+1
                 signfacts{sc}<-l
              } #
 
 
-            eval(paste0('pmodel.X',l,'.EffectSignif.NullDistr<-ssqp'))
-            eval(paste0('pmodel.X',l,'.EffectSignif.p<-p'))
+            eval(paste0('pmodel$X',l,'$EffectSignif$NullDistr<-ssqp'))
+            eval(paste0('pmodel$X',l,'$EffectSignif$p<-p'))
         }else{
-            if (ismember(l, ascamodel.Options.permfacts)) {
-                eval(paste0('Xr<-ascamodel.X', l, '.ReducedMatrix '))
-                eval(paste0('Dr<-ascamodel.X', l, '.DesignMatrix '))
-                ssqp<-ptest(Xr,Dr, ascamodel.Options.nperm)
-                eval(paste0('seff<-ascamodel.X', l, '.EffectSSQ '))
-                p<-length(find(ssqp>=seff))./ascamodel.Options.nperm
+            if (ismember(l, ascamodel$Options$permfacts)) {
+                eval(paste0('Xr<-ascamodel$X', l, '$ReducedMatrix '))
+                eval(paste0('Dr<-ascamodel$X', l, '$DesignMatrix '))
+                ssqp<-ptest(Xr,Dr, ascamodel$Options$nperm)
+                eval(paste0('seff<-ascamodel$X', l, '$EffectSSQ '))
+                p<-length(find(ssqp>=seff))/ascamodel$Options$nperm
                 if (p<<-0.05) {
                     sc<-sc+1
                     signfacts{sc}<-l
                  } #
 
-                eval(paste0('pmodel.X',l,'.EffectSignif.NullDistr<-ssqp'))
-                eval(paste0('pmodel.X',l,'.EffectSignif.p<-p'))
+                eval(paste0('pmodel$X',l,'$EffectSignif$NullDistr<-ssqp'))
+                eval(paste0('pmodel$X',l,'$EffectSignif$p<-p'))
             }else{
-                eval(paste0('pmodel.X',l,'.EffectSignif.NullDistr<-[]'))
-                eval(paste0('pmodel.X',l,'.EffectSignif.p<-[]'))
+                eval(paste0('pmodel$X',l,'$EffectSignif$NullDistr<-[]'))
+                eval(paste0('pmodel$X',l,'$EffectSignif$p<-[]'))
 
 
              } #
          } #
     }else{
-        eval(paste0('pmodel.X',l,'.EffectSignif.NullDistr<-[]'))
-        eval(paste0('pmodel.X',l,'.EffectSignif.p<-[]'))
+        eval(paste0('pmodel$X',l,'$EffectSignif$NullDistr<-[]'))
+        eval(paste0('pmodel$X',l,'$EffectSignif$p<-[]'))
      } #
  } #
 
-if (strcmp(ascamodel.Options.permtest, 'on')) {
+if (strcmp(ascamodel$Options$permtest, 'on')) {
     signfacts<-signfacts(1:sc)
  } #
 
-pmodel.SignificantTerms<-signfacts
+pmodel$SignificantTerms<-signfacts
 
 }
 
@@ -282,7 +282,7 @@ ssqp<-matrix(0,nperm,1)   #Initialization of the permuted SSQ vector
 for ( i in 1 : nperm) {
     hh<-randperm(ns)
     Xpp<-D[hh,]*pinv(D[hh,])*X
-    ssqp(i)<-sum(sum(Xpp.^2))
+    ssqp(i)<-sum(sum(Xpp^2))
  } #
 
 return(ssqp)
@@ -292,24 +292,24 @@ return(ssqp)
 ascasca <-function(ascamodel) {
 
 smodel<-ascamodel
-dlab<-ascamodel.TermLabels
+dlab<-ascamodel$TermLabels
 
 for ( i in 2 : length(dlab)) {
     l<-strtrim(dlab[[i]])
-    eval(paste0('Xr<-ascamodel.X', l, '.EffectMatrix '))
-    eval(paste0('ssqr<-ascamodel.X', l, '.EffectSSQ '))
+    eval(paste0('Xr<-ascamodel$X', l, '$EffectMatrix '))
+    eval(paste0('ssqr<-ascamodel$X', l, '$EffectSSQ '))
 
     R<-rank(Xr)
     [u,s,P]<-svds(Xr,R)
     t<-u*s
-    taug<-(Xr+ascamodel.XRes.EffectMatrix)*P
+    taug<-(Xr+ascamodel$XRes$EffectMatrix)*P
     varex<-100*(diag(s)^2)/ssqr
 
-    eval(paste0('smodel.X', l, '.SCA.Model.Scores<-t '))
-    eval(paste0('smodel.X', l, '.SCA.Model.ScoreswithRes<-taug '))
-    eval(paste0('smodel.X', l, '.SCA.Model.Loadings<-P '))
-    eval(paste0('smodel.X', l, '.SCA.Model.ExplVar<-varex '))
-#       eval(paste0('smodel.X', l, '.SCA.Model.s<-s ']) # Only if we want to
+    eval(paste0('smodel$X', l, '$SCA$Model$Scores<-t '))
+    eval(paste0('smodel$X', l, '$SCA$Model$ScoreswithRes<-taug '))
+    eval(paste0('smodel$X', l, '$SCA$Model$Loadings<-P '))
+    eval(paste0('smodel$X', l, '$SCA$Model$ExplVar<-varex '))
+#       eval(paste0('smodel$X', l, '$SCA$Model$s<-s ']) # Only if we want to
 #       trace error : Q residuals etc...
  } #
 
@@ -321,35 +321,35 @@ return(smodel)
 ascaboot <-function(ascamodel) {
 
 bmodel<-ascamodel
-dlab<-ascamodel.TermLabels
-Xd<-ascamodel.Xdata.CenteredData
+dlab<-ascamodel$TermLabels
+Xd<-ascamodel$Xdata$CenteredData
 
 for ( i in 2 : length(dlab)) {
     l<-strtrim(dlab[[i]])
 
-    if (strcmp(ascamodel.Options.bootstrap, 'all')) {
-        if (strcmp(ascamodel.Options.bootmatrix, 'original')) {
+    if (strcmp(ascamodel$Options$bootstrap, 'all')) {
+        if (strcmp(ascamodel$Options$bootmatrix, 'original')) {
 
-            Xd<-ascamodel.Xdata.CenteredData
-        }else if (strcmp(ascamodel.Options.bootmatrix, 'reduced')) {
-            eval(paste0('Xd<-ascamodel.X', l, '.ReducedMatrix '))
+            Xd<-ascamodel$Xdata$CenteredData
+        }else if (strcmp(ascamodel$Options$bootmatrix, 'reduced')) {
+            eval(paste0('Xd<-ascamodel$X', l, '$ReducedMatrix '))
          } #
 
-        eval(paste0('Dd<-ascamodel.X', l, '.DesignMatrix '))
-        eval(paste0('Pd<-ascamodel.X', l, '.SCA.Model.Loadings '))
-        [Pb, Pbcrit, svars]<-bootload(Xd,Dd, Pd, ascamodel.Options.confl, ascamodel.Options.nboot)
-    } else if (strcmp(ascamodel.Options.bootstrap, 'signif')) {
-        if (ismember(l, ascamodel.SignificantTerms)) {
-            if (strcmp(ascamodel.Options.bootmatrix, 'original')) {
+        eval(paste0('Dd<-ascamodel$X', l, '$DesignMatrix '))
+        eval(paste0('Pd<-ascamodel$X', l, '$SCA$Model$Loadings '))
+        [Pb, Pbcrit, svars]<-bootload(Xd,Dd, Pd, ascamodel$Options$confl, ascamodel$Options$nboot)
+    } else if (strcmp(ascamodel$Options$bootstrap, 'signif')) {
+        if (ismember(l, ascamodel$SignificantTerms)) {
+            if (strcmp(ascamodel$Options$bootmatrix, 'original')) {
 
-                Xd<-ascamodel.Xdata.CenteredData
-            } else if (strcmp(ascamodel.Options.bootmatrix, 'reduced')) {
+                Xd<-ascamodel$Xdata$CenteredData
+            } else if (strcmp(ascamodel$Options$bootmatrix, 'reduced')) {
 
-                eval(paste0('Xd<-ascamodel.X', l, '.ReducedMatrix '))
+                eval(paste0('Xd<-ascamodel$X', l, '$ReducedMatrix '))
              } #
-            eval(paste0('Dd<-ascamodel.X', l, '.DesignMatrix '))
-            eval(paste0('Pd<-ascamodel.X', l, '.SCA.Model.Loadings '))
-            [Pb, Pbcrit, svars]<-bootload(Xd,Dd, Pd, ascamodel.Options.confl, ascamodel.Options.nboot)
+            eval(paste0('Dd<-ascamodel$X', l, '$DesignMatrix '))
+            eval(paste0('Pd<-ascamodel$X', l, '$SCA$Model$Loadings '))
+            [Pb, Pbcrit, svars]<-bootload(Xd,Dd, Pd, ascamodel$Options$confl, ascamodel$Options$nboot)
         } else {
             Pb<-NULL
             Pbcrit<-NULL
@@ -357,28 +357,28 @@ for ( i in 2 : length(dlab)) {
          } #
 
 
-    } else if (strcmp(ascamodel.Options.bootstrap, 'off')) {
+    } else if (strcmp(ascamodel$Options$bootstrap, 'off')) {
         Pb<-NULL
         Pbcrit<-NULL
         svars<-NULL
      } #
 
 
-    switch (ascamodel.Options.bootsave,
+    switch (ascamodel$Options$bootsave,
         'all'={
-            eval(paste0('bmodel.X', l, '.SCA.Bootstrap.Loadings<-Pb '))
-            eval(paste0('bmodel.X', l, '.SCA.Bootstrap.ConfIntervals<-Pbcrit '))
-            eval(paste0('bmodel.X', l, '.SCA.Bootstrap.SignificantVariables<-svars '))
+            eval(paste0('bmodel$X', l, '$SCA$Bootstrap$Loadings<-Pb '))
+            eval(paste0('bmodel$X', l, '$SCA$Bootstrap$ConfIntervals<-Pbcrit '))
+            eval(paste0('bmodel$X', l, '$SCA$Bootstrap$SignificantVariables<-svars '))
 }
         'confint'={
-            eval(paste0('bmodel.X', l, '.SCA.Bootstrap.Loadings<-[] '))
-            eval(paste0('bmodel.X', l, '.SCA.Bootstrap.ConfIntervals<-Pbcrit '))
-            eval(paste0('bmodel.X', l, '.SCA.Bootstrap.SignificantVariables<-svars '))
+            eval(paste0('bmodel$X', l, '$SCA$Bootstrap$Loadings<-[] '))
+            eval(paste0('bmodel$X', l, '$SCA$Bootstrap$ConfIntervals<-Pbcrit '))
+            eval(paste0('bmodel$X', l, '$SCA$Bootstrap$SignificantVariables<-svars '))
 }
         'signvars'={
-            eval(paste0('bmodel.X', l, '.SCA.Bootstrap.Loadings<-[] '))
-            eval(paste0('bmodel.X', l, '.SCA.Bootstrap.ConfIntervals<-[] '))
-            eval(paste0('bmodel.X', l, '.SCA.Bootstrap.SignificantVariables<-svars '))
+            eval(paste0('bmodel$X', l, '$SCA$Bootstrap$Loadings<-[] '))
+            eval(paste0('bmodel$X', l, '$SCA$Bootstrap$ConfIntervals<-[] '))
+            eval(paste0('bmodel$X', l, '$SCA$Bootstrap$SignificantVariables<-svars '))
 }
      ) #
 
