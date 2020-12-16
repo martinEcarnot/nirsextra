@@ -178,8 +178,8 @@ for ( i in 2 : length(dmatrices)) {
     eval(parse(text=paste0('model$X', l,'$ReducedMatrix<-Xx')))
  } #
 
-model.TermLabels<-deslabels
-model.Options<-opt
+model$TermLabels<-deslabels
+model$Options<-opt
 
 
 #Permutation tests, if required
@@ -200,20 +200,20 @@ model<-ascaboot(model)
 
 
 
-
-
-
-
-#############################################
+#
+#
+#
+#
+# #############################################
 ascaptest <-function(ascamodel) {
-pmodel
+
 
 pmodel<-ascamodel
 dlab<-ascamodel$TermLabels
 
 if  (ascamodel$Options$permtest=='on') {      #  strcmp(ascamodel.Options.permtest, 'on') {
 
-    signfacts<-cell(length(dlab)-1,1)
+    signfacts<-list(length(dlab)-1)
     sc<-0
 }else{
     signfacts<-NULL
@@ -221,217 +221,217 @@ if  (ascamodel$Options$permtest=='on') {      #  strcmp(ascamodel.Options.permte
 
 
 for ( i in 2 : length(dlab)) {
-    l<-strtrim(dlab[[i]])
+    l<-dlab[[i]]
     if (ascamodel$Options$permtest == 'on') {  # strcmp(ascamodel$Options$permtest, 'on') {
-        if (ischar(ascamodel$Options$permfacts) && ascamodel$Options$permfacts== 'all') {
+        if (is.character(ascamodel$Options$permfacts) && ascamodel$Options$permfacts== 'all') {
 
-            eval(paste0('Xr<-ascamodel$X', l, '$ReducedMatrix '))
-            eval(paste0('Dr<-ascamodel$X', l, '$DesignMatrix '))
+            eval(parse(text=paste0('Xr<-ascamodel$X', l, '$ReducedMatrix ')))
+            eval(parse(text=paste0('Dr<-ascamodel$X', l, '$DesignMatrix ')))
             ssqp<-ptest(Xr,Dr, ascamodel$Options$nperm)
-            eval(paste0('seff<-ascamodel$X', l, '$EffectSSQ '))
-            p<-length(find(ssqp>=seff))/ascamodel$Options$nperm
+            eval(parse(text=paste0('seff<-ascamodel$X', l, '$EffectSSQ ')))
+            p<-length(which(ssqp>=seff))/ascamodel$Options$nperm
             if (p<<-0.05) {
                 sc<-sc+1
-                signfacts{sc}<-l
+                signfacts[[sc]]<-l
              } #
 
 
-            eval(paste0('pmodel$X',l,'$EffectSignif$NullDistr<-ssqp'))
-            eval(paste0('pmodel$X',l,'$EffectSignif$p<-p'))
+            eval(parse(text=paste0('pmodel$X',l,'$EffectSignif$NullDistr<-ssqp')))
+            eval(parse(text=paste0('pmodel$X',l,'$EffectSignif$p<-p')))
         }else{
-            if (ismember(l, ascamodel$Options$permfacts)) {
-                eval(paste0('Xr<-ascamodel$X', l, '$ReducedMatrix '))
-                eval(paste0('Dr<-ascamodel$X', l, '$DesignMatrix '))
+            if (is.element(l, ascamodel$Options$permfacts)) {  # Or  ascamodel$Options$permfacts == 'all'
+                eval(parse(text=paste0('Xr<-ascamodel$X', l, '$ReducedMatrix ')))
+                eval(parse(text=paste0('Dr<-ascamodel$X', l, '$DesignMatrix ')))
                 ssqp<-ptest(Xr,Dr, ascamodel$Options$nperm)
-                eval(paste0('seff<-ascamodel$X', l, '$EffectSSQ '))
+                eval(parse(text=paste0('seff<-ascamodel$X', l, '$EffectSSQ ')))
                 p<-length(find(ssqp>=seff))/ascamodel$Options$nperm
                 if (p<<-0.05) {
                     sc<-sc+1
-                    signfacts{sc}<-l
+                    signfacts[[sc]]<-l
                  } #
 
-                eval(paste0('pmodel$X',l,'$EffectSignif$NullDistr<-ssqp'))
-                eval(paste0('pmodel$X',l,'$EffectSignif$p<-p'))
+                eval(parse(text=paste0('pmodel$X',l,'$EffectSignif$NullDistr<-ssqp')))
+                eval(parse(text=paste0('pmodel$X',l,'$EffectSignif$p<-p')))
             }else{
-                eval(paste0('pmodel$X',l,'$EffectSignif$NullDistr<-[]'))
-                eval(paste0('pmodel$X',l,'$EffectSignif$p<-[]'))
+                eval(parse(text=paste0('pmodel$X',l,'$EffectSignif$NullDistr<-NULL]')))
+                eval(parse(text=paste0('pmodel$X',l,'$EffectSignif$p<-NULL')))
 
 
              } #
          } #
     }else{
-        eval(paste0('pmodel$X',l,'$EffectSignif$NullDistr<-[]'))
-        eval(paste0('pmodel$X',l,'$EffectSignif$p<-[]'))
+        eval(parse(text=paste0('pmodel$X',l,'$EffectSignif$NullDistr<-[]')))
+        eval(parse(text=paste0('pmodel$X',l,'$EffectSignif$p<-[]')))
      } #
  } #
 
-if (strcmp(ascamodel$Options$permtest, 'on')) {
-    signfacts<-signfacts(1:sc)
+if (ascamodel$Options$permtest == 'on') {
+    signfacts<-signfacts[[1:sc]]
  } #
 
 pmodel$SignificantTerms<-signfacts
-
+return(pmodel)
 }
 
-########################################################
+# ########################################################
 ptest <-function(X,D, nperm) {
 
-ns<-size(X,1)  #Number of samples
-ssqp<-matrix(0,nperm,1)   #Initialization of the permuted SSQ vector
+ns<-nrow(X)  #Number of samples
+ssqp<-matrix(0,nrow=nperm,ncol=1)   #Initialization of the permuted SSQ vector
 
 for ( i in 1 : nperm) {
-    hh<-randperm(ns)
-    Xpp<-D[hh,]*pinv(D[hh,])*X
-    ssqp(i)<-sum(sum(Xpp^2))
+    hh<-sample(ns)
+    Xpp<-D[hh,] %*% ginv(D[hh,]) %*% X
+    ssqp[i]<-sum(sum(Xpp^2))
  } #
 
 return(ssqp)
 }
-
-##########################################################
+#
+# ##########################################################
 ascasca <-function(ascamodel) {
 
 smodel<-ascamodel
 dlab<-ascamodel$TermLabels
 
 for ( i in 2 : length(dlab)) {
-    l<-strtrim(dlab[[i]])
-    eval(paste0('Xr<-ascamodel$X', l, '$EffectMatrix '))
-    eval(paste0('ssqr<-ascamodel$X', l, '$EffectSSQ '))
+    l<-dlab[[i]]
+    eval(parse(text=paste0('Xr<-ascamodel$X', l, '$EffectMatrix ')))
+    eval(parse(text=paste0('ssqr<-ascamodel$X', l, '$EffectSSQ ')))
 
-    R<-rank(Xr)
-    [u,s,P]<-svds(Xr,R)
+    R<-qr(Xr)$rank
+    rsvd<-svd(Xr,R)
     t<-u*s
     taug<-(Xr+ascamodel$XRes$EffectMatrix)*P
     varex<-100*(diag(s)^2)/ssqr
 
-    eval(paste0('smodel$X', l, '$SCA$Model$Scores<-t '))
-    eval(paste0('smodel$X', l, '$SCA$Model$ScoreswithRes<-taug '))
-    eval(paste0('smodel$X', l, '$SCA$Model$Loadings<-P '))
-    eval(paste0('smodel$X', l, '$SCA$Model$ExplVar<-varex '))
-#       eval(paste0('smodel$X', l, '$SCA$Model$s<-s ']) # Only if we want to
+    eval(parse(text=paste0('smodel$X', l, '$SCA$Model$Scores<-t ')))
+    eval(parse(text=paste0('smodel$X', l, '$SCA$Model$ScoreswithRes<-taug ')))
+    eval(parse(text=paste0('smodel$X', l, '$SCA$Model$Loadings<-P ')))
+    eval(parse(text=paste0('smodel$X', l, '$SCA$Model$ExplVar<-varex ')))
+#       eval(parse(text=paste0('smodel$X', l, '$SCA$Model$s<-s ']) # Only if we want to
 #       trace error : Q residuals etc...
  } #
 
 return(smodel)
-
-}
-
-##########################################################
-ascaboot <-function(ascamodel) {
-
-bmodel<-ascamodel
-dlab<-ascamodel$TermLabels
-Xd<-ascamodel$Xdata$CenteredData
-
-for ( i in 2 : length(dlab)) {
-    l<-strtrim(dlab[[i]])
-
-    if (strcmp(ascamodel$Options$bootstrap, 'all')) {
-        if (strcmp(ascamodel$Options$bootmatrix, 'original')) {
-
-            Xd<-ascamodel$Xdata$CenteredData
-        }else if (strcmp(ascamodel$Options$bootmatrix, 'reduced')) {
-            eval(paste0('Xd<-ascamodel$X', l, '$ReducedMatrix '))
-         } #
-
-        eval(paste0('Dd<-ascamodel$X', l, '$DesignMatrix '))
-        eval(paste0('Pd<-ascamodel$X', l, '$SCA$Model$Loadings '))
-        [Pb, Pbcrit, svars]<-bootload(Xd,Dd, Pd, ascamodel$Options$confl, ascamodel$Options$nboot)
-    } else if (strcmp(ascamodel$Options$bootstrap, 'signif')) {
-        if (ismember(l, ascamodel$SignificantTerms)) {
-            if (strcmp(ascamodel$Options$bootmatrix, 'original')) {
-
-                Xd<-ascamodel$Xdata$CenteredData
-            } else if (strcmp(ascamodel$Options$bootmatrix, 'reduced')) {
-
-                eval(paste0('Xd<-ascamodel$X', l, '$ReducedMatrix '))
-             } #
-            eval(paste0('Dd<-ascamodel$X', l, '$DesignMatrix '))
-            eval(paste0('Pd<-ascamodel$X', l, '$SCA$Model$Loadings '))
-            [Pb, Pbcrit, svars]<-bootload(Xd,Dd, Pd, ascamodel$Options$confl, ascamodel$Options$nboot)
-        } else {
-            Pb<-NULL
-            Pbcrit<-NULL
-            svars<-NULL
-         } #
-
-
-    } else if (strcmp(ascamodel$Options$bootstrap, 'off')) {
-        Pb<-NULL
-        Pbcrit<-NULL
-        svars<-NULL
-     } #
-
-
-    switch (ascamodel$Options$bootsave,
-        'all'={
-            eval(paste0('bmodel$X', l, '$SCA$Bootstrap$Loadings<-Pb '))
-            eval(paste0('bmodel$X', l, '$SCA$Bootstrap$ConfIntervals<-Pbcrit '))
-            eval(paste0('bmodel$X', l, '$SCA$Bootstrap$SignificantVariables<-svars '))
-}
-        'confint'={
-            eval(paste0('bmodel$X', l, '$SCA$Bootstrap$Loadings<-[] '))
-            eval(paste0('bmodel$X', l, '$SCA$Bootstrap$ConfIntervals<-Pbcrit '))
-            eval(paste0('bmodel$X', l, '$SCA$Bootstrap$SignificantVariables<-svars '))
-}
-        'signvars'={
-            eval(paste0('bmodel$X', l, '$SCA$Bootstrap$Loadings<-[] '))
-            eval(paste0('bmodel$X', l, '$SCA$Bootstrap$ConfIntervals<-[] '))
-            eval(paste0('bmodel$X', l, '$SCA$Bootstrap$SignificantVariables<-svars '))
-}
-     ) #
-
- } #
-
-}
-
-
-#########################################################
-bootload <-function(Xd,Dd, Pd, confl, nboot) {
-#Bootstrap
-
-sl<-(confl+1)/2
-ll<-1-sl
-svars<-cell(1,size(Pd,2))
-
-Pb<-matrix(0,[nboot size(Pd)])
-
-bootp<-matrix(0,size(Xd,1),1)
-lev<-unique(Dd, 'rows')
-
-for ( i in 1 : nboot) {
-    for ( j in 1 : nrow(lev,1)) {
-        xx<-find(ismember(Dd, lev[j,], 'rows')==1)
-        yy<-ceil(length(xx)*rand(1,length(xx)))
-        bootp(xx)<-xx(yy)
-     } #
-    Xboot<-Xd[bootp,]
-    Xdp<-Dd*pinv(Dd)*Xboot
-    [~,~,vb]<-svds(Xdp,size(Pd,2))
-    [~,Pb(i,:,:)]<-orth.proc(Pd,vb)
- } #
-Pb<-sort(Pb)
-Pbcrit<-Pb[[ceil(ll*nboot) ceil(sl*nboot)],,]
-
-for ( i in 1 : length(svars)) {
-    svars[[i]]<-find(sign(squeeze(Pbcrit[1,,i]*Pbcrit[2,,i]))==1)
- } #
-
-return(list([Pb, Pbcrit,svars]))
-}
-
-############################################################
-orth.proc <-function(x,y) {
-#computes orthogonal procrustes rotation projecting matrix y onto the
-#subspace spanned by matrix x.
-# syntax: [r,yrot]<-orth.proc(x,y)
-# where r is the rotation matrix and yrot is the procrustes rotated y
-
-[u,~,v]<-svd(t(y)*x, 0)
-r<-u*t(v)
-yrot<-y*r
-
-return(list(r,yrot))
- }
-
+#
+# }
+#
+# ##########################################################
+# ascaboot <-function(ascamodel) {
+#
+# bmodel<-ascamodel
+# dlab<-ascamodel$TermLabels
+# Xd<-ascamodel$Xdata$CenteredData
+#
+# for ( i in 2 : length(dlab)) {
+#     l<-strtrim(dlab[[i]])
+#
+#     if (strcmp(ascamodel$Options$bootstrap, 'all')) {
+#         if (strcmp(ascamodel$Options$bootmatrix, 'original')) {
+#
+#             Xd<-ascamodel$Xdata$CenteredData
+#         }else if (strcmp(ascamodel$Options$bootmatrix, 'reduced')) {
+#             eval(parse(text=paste0('Xd<-ascamodel$X', l, '$ReducedMatrix ')))
+#          } #
+#
+#         eval(parse(text=paste0('Dd<-ascamodel$X', l, '$DesignMatrix ')))
+#         eval(parse(text=paste0('Pd<-ascamodel$X', l, '$SCA$Model$Loadings ')))
+#         [Pb, Pbcrit, svars]<-bootload(Xd,Dd, Pd, ascamodel$Options$confl, ascamodel$Options$nboot)
+#     } else if (strcmp(ascamodel$Options$bootstrap, 'signif')) {
+#         if (ismember(l, ascamodel$SignificantTerms)) {
+#             if (strcmp(ascamodel$Options$bootmatrix, 'original')) {
+#
+#                 Xd<-ascamodel$Xdata$CenteredData
+#             } else if (strcmp(ascamodel$Options$bootmatrix, 'reduced')) {
+#
+#                 eval(parse(text=paste0('Xd<-ascamodel$X', l, '$ReducedMatrix ')))
+#              } #
+#             eval(parse(text=paste0('Dd<-ascamodel$X', l, '$DesignMatrix ')))
+#             eval(parse(text=paste0('Pd<-ascamodel$X', l, '$SCA$Model$Loadings ')))
+#             [Pb, Pbcrit, svars]<-bootload(Xd,Dd, Pd, ascamodel$Options$confl, ascamodel$Options$nboot)
+#         } else {
+#             Pb<-NULL
+#             Pbcrit<-NULL
+#             svars<-NULL
+#          } #
+#
+#
+#     } else if (strcmp(ascamodel$Options$bootstrap, 'off')) {
+#         Pb<-NULL
+#         Pbcrit<-NULL
+#         svars<-NULL
+#      } #
+#
+#
+#     switch (ascamodel$Options$bootsave,
+#         'all'={
+#             eval(parse(text=paste0('bmodel$X', l, '$SCA$Bootstrap$Loadings<-Pb ')))
+#             eval(parse(text=paste0('bmodel$X', l, '$SCA$Bootstrap$ConfIntervals<-Pbcrit ')))
+#             eval(parse(text=paste0('bmodel$X', l, '$SCA$Bootstrap$SignificantVariables<-svars ')))
+# }
+#         'confint'={
+#             eval(parse(text=paste0('bmodel$X', l, '$SCA$Bootstrap$Loadings<-[] ')))
+#             eval(parse(text=paste0('bmodel$X', l, '$SCA$Bootstrap$ConfIntervals<-Pbcrit ')))
+#             eval(parse(text=paste0('bmodel$X', l, '$SCA$Bootstrap$SignificantVariables<-svars ')))
+# }
+#         'signvars'={
+#             eval(parse(text=paste0('bmodel$X', l, '$SCA$Bootstrap$Loadings<-[] ')))
+#             eval(parse(text=paste0('bmodel$X', l, '$SCA$Bootstrap$ConfIntervals<-[] ')))
+#             eval(parse(text=paste0('bmodel$X', l, '$SCA$Bootstrap$SignificantVariables<-svars ')))
+# }
+#      ) #
+#
+#  } #
+#
+# }
+#
+#
+# #########################################################
+# bootload <-function(Xd,Dd, Pd, confl, nboot) {
+# #Bootstrap
+#
+# sl<-(confl+1)/2
+# ll<-1-sl
+# svars<-cell(1,size(Pd,2))
+#
+# Pb<-matrix(0,[nboot size(Pd)])
+#
+# bootp<-matrix(0,size(Xd,1),1)
+# lev<-unique(Dd, 'rows')
+#
+# for ( i in 1 : nboot) {
+#     for ( j in 1 : nrow(lev,1)) {
+#         xx<-find(ismember(Dd, lev[j,], 'rows')==1)
+#         yy<-ceil(length(xx)*rand(1,length(xx)))
+#         bootp(xx)<-xx(yy)
+#      } #
+#     Xboot<-Xd[bootp,]
+#     Xdp<-Dd*pinv(Dd)*Xboot
+#     [~,~,vb]<-svds(Xdp,size(Pd,2))
+#     [~,Pb(i,:,:)]<-orth.proc(Pd,vb)
+#  } #
+# Pb<-sort(Pb)
+# Pbcrit<-Pb[[ceil(ll*nboot) ceil(sl*nboot)],,]
+#
+# for ( i in 1 : length(svars)) {
+#     svars[[i]]<-find(sign(squeeze(Pbcrit[1,,i]*Pbcrit[2,,i]))==1)
+#  } #
+#
+# return(list([Pb, Pbcrit,svars]))
+# }
+#
+# ############################################################
+# orth.proc <-function(x,y) {
+# #computes orthogonal procrustes rotation projecting matrix y onto the
+# #subspace spanned by matrix x.
+# # syntax: [r,yrot]<-orth.proc(x,y)
+# # where r is the rotation matrix and yrot is the procrustes rotated y
+#
+# [u,~,v]<-svd(t(y)*x, 0)
+# r<-u*t(v)
+# yrot<-y*r
+#
+# return(list(r,yrot))
+#  }
+#
