@@ -166,7 +166,13 @@ for ( i in 2 : length(dmatrices)) {
     l<-deslabels[[i]]
 
     if (is.character(opt$reducedmodel) && opt$reducedmodel=='standard') {
-        remfact<-desterms[c(2:i-1,i+1:length(desterms))]
+        if (i==2) {
+          remfact<-desterms[(i+1):length(desterms)]
+        } else if (i==length(dmatrices)) {
+          remfact<-desterms[2:(length(desterms)-1)]
+        } else {
+          remfact<-desterms[c(2:(i-1),(i+1):length(desterms))]
+        }
     } else {
         remfact<-opt$reducedmodel[[i]]
      } #
@@ -222,7 +228,7 @@ if  (ascamodel$Options$permtest=='on') {      #  strcmp(ascamodel.Options.permte
 
 for ( i in 2 : length(dlab)) {
     l<-dlab[[i]]
-    if (ascamodel$Options$permtest == 'on') {  # strcmp(ascamodel$Options$permtest, 'on') {
+    if (ascamodel$Options$permtest == 'on') {
         if (is.character(ascamodel$Options$permfacts) && ascamodel$Options$permfacts== 'all') {
 
             eval(parse(text=paste0('Xr<-ascamodel$X', l, '$ReducedMatrix ')))
@@ -278,11 +284,12 @@ ptest <-function(X,D, nperm) {
 
 ns<-nrow(X)  #Number of samples
 ssqp<-matrix(0,nrow=nperm,ncol=1)   #Initialization of the permuted SSQ vector
+if (is.null(dim(D))) {dim(D)=c(length(D),1)}
 
 for ( i in 1 : nperm) {
     hh<-sample(ns)
     Xpp<-D[hh,] %*% ginv(D[hh,]) %*% X
-    ssqp[i]<-sum(sum(Xpp^2))
+    ssqp[i]<-sum(Xpp^2)
  } #
 
 return(ssqp)
