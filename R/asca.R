@@ -157,7 +157,7 @@ for ( i in 1 : length(dmatrices)) {
  } #
 
 model$XRes$EffectMatrix<-Xd
-model$XRes$EffectSSQ<-sum(sum(Xd.^2))
+model$XRes$EffectSSQ<-sum(sum(Xd^2))
 model$XRes$EffectExplVar<-100*(model$XRes$EffectSSQ/ssqtot)
 model$XRes$EffectLabel<-'Res'
 model$XRes$TermOrder<-max(desorder)+1
@@ -301,8 +301,8 @@ for ( i in 2 : length(dlab)) {
 
     R<-qr(Xr)$rank
     rsvd<-svd(Xr,R)
-    t<-u*s
-    taug<-(Xr+ascamodel$XRes$EffectMatrix)*P
+    t<-rsvd$u %*% rsvd$s
+    taug<-(Xr+ascamodel$XRes$EffectMatrix) %*% rsvd$v
     varex<-100*(diag(s)^2)/ssqr
 
     eval(parse(text=paste0('smodel$X', l, '$SCA$Model$Scores<-t ')))
@@ -314,124 +314,139 @@ for ( i in 2 : length(dlab)) {
  } #
 
 return(smodel)
-#
-# }
-#
+
+}
+
 # ##########################################################
-# ascaboot <-function(ascamodel) {
-#
-# bmodel<-ascamodel
-# dlab<-ascamodel$TermLabels
-# Xd<-ascamodel$Xdata$CenteredData
-#
-# for ( i in 2 : length(dlab)) {
-#     l<-strtrim(dlab[[i]])
-#
-#     if (strcmp(ascamodel$Options$bootstrap, 'all')) {
-#         if (strcmp(ascamodel$Options$bootmatrix, 'original')) {
-#
-#             Xd<-ascamodel$Xdata$CenteredData
-#         }else if (strcmp(ascamodel$Options$bootmatrix, 'reduced')) {
-#             eval(parse(text=paste0('Xd<-ascamodel$X', l, '$ReducedMatrix ')))
-#          } #
-#
-#         eval(parse(text=paste0('Dd<-ascamodel$X', l, '$DesignMatrix ')))
-#         eval(parse(text=paste0('Pd<-ascamodel$X', l, '$SCA$Model$Loadings ')))
-#         [Pb, Pbcrit, svars]<-bootload(Xd,Dd, Pd, ascamodel$Options$confl, ascamodel$Options$nboot)
-#     } else if (strcmp(ascamodel$Options$bootstrap, 'signif')) {
-#         if (ismember(l, ascamodel$SignificantTerms)) {
-#             if (strcmp(ascamodel$Options$bootmatrix, 'original')) {
-#
-#                 Xd<-ascamodel$Xdata$CenteredData
-#             } else if (strcmp(ascamodel$Options$bootmatrix, 'reduced')) {
-#
-#                 eval(parse(text=paste0('Xd<-ascamodel$X', l, '$ReducedMatrix ')))
-#              } #
-#             eval(parse(text=paste0('Dd<-ascamodel$X', l, '$DesignMatrix ')))
-#             eval(parse(text=paste0('Pd<-ascamodel$X', l, '$SCA$Model$Loadings ')))
-#             [Pb, Pbcrit, svars]<-bootload(Xd,Dd, Pd, ascamodel$Options$confl, ascamodel$Options$nboot)
-#         } else {
-#             Pb<-NULL
-#             Pbcrit<-NULL
-#             svars<-NULL
-#          } #
-#
-#
-#     } else if (strcmp(ascamodel$Options$bootstrap, 'off')) {
-#         Pb<-NULL
-#         Pbcrit<-NULL
-#         svars<-NULL
-#      } #
-#
-#
-#     switch (ascamodel$Options$bootsave,
-#         'all'={
-#             eval(parse(text=paste0('bmodel$X', l, '$SCA$Bootstrap$Loadings<-Pb ')))
-#             eval(parse(text=paste0('bmodel$X', l, '$SCA$Bootstrap$ConfIntervals<-Pbcrit ')))
-#             eval(parse(text=paste0('bmodel$X', l, '$SCA$Bootstrap$SignificantVariables<-svars ')))
-# }
-#         'confint'={
-#             eval(parse(text=paste0('bmodel$X', l, '$SCA$Bootstrap$Loadings<-[] ')))
-#             eval(parse(text=paste0('bmodel$X', l, '$SCA$Bootstrap$ConfIntervals<-Pbcrit ')))
-#             eval(parse(text=paste0('bmodel$X', l, '$SCA$Bootstrap$SignificantVariables<-svars ')))
-# }
-#         'signvars'={
-#             eval(parse(text=paste0('bmodel$X', l, '$SCA$Bootstrap$Loadings<-[] ')))
-#             eval(parse(text=paste0('bmodel$X', l, '$SCA$Bootstrap$ConfIntervals<-[] ')))
-#             eval(parse(text=paste0('bmodel$X', l, '$SCA$Bootstrap$SignificantVariables<-svars ')))
-# }
-#      ) #
-#
-#  } #
-#
-# }
-#
-#
+ascaboot <-function(ascamodel) {
+
+bmodel<-ascamodel
+dlab<-ascamodel$TermLabels
+Xd<-ascamodel$Xdata$CenteredData
+
+for ( i in 2 : length(dlab)) {
+    l<-dlab[[i]]
+
+    if (ascamodel$Options$bootstrap == 'all') {
+        if (ascamodel$Options$bootmatrix == 'original') {
+
+            Xd<-ascamodel$Xdata$CenteredData
+        }else if (ascamodel$Options$bootmatrix == 'reduced') {
+            eval(parse(text=paste0('Xd<-ascamodel$X', l, '$ReducedMatrix ')))
+         } #
+
+        eval(parse(text=paste0('Dd<-ascamodel$X', l, '$DesignMatrix ')))
+        eval(parse(text=paste0('Pd<-ascamodel$X', l, '$SCA$Model$Loadings ')))
+        resBootload<-bootload(Xd,Dd, Pd, ascamodel$Options$confl, ascamodel$Options$nboot)
+        Pb=resBootload$Pb
+        Pbcrit=resBootload$Pbcrit
+        svars=resBootload$svars
+
+    } else if (ascamodel$Options$bootstrap == 'signif') {
+        if (is.element(l, ascamodel$SignificantTerms)) {
+            if (ascamodel$Options$bootmatrix == 'original') {
+
+                Xd<-ascamodel$Xdata$CenteredData
+            } else if (ascamodel$Options$bootmatrix == 'reduced') {
+
+                eval(parse(text=paste0('Xd<-ascamodel$X', l, '$ReducedMatrix ')))
+             }
+            eval(parse(text=paste0('Dd<-ascamodel$X', l, '$DesignMatrix ')))
+            eval(parse(text=paste0('Pd<-ascamodel$X', l, '$SCA$Model$Loadings ')))
+            resBootload<-bootload(Xd,Dd, Pd, ascamodel$Options$confl, ascamodel$Options$nboot)
+            Pb=resBootload$Pb
+            Pbcrit=resBootload$Pbcrit
+            svars=resBootload$svars
+        } else {
+            Pb<-NULL
+            Pbcrit<-NULL
+            svars<-NULL
+         } #
+
+
+    } else if (ascamodel$Options$bootstrap == 'off') {
+        Pb<-NULL
+        Pbcrit<-NULL
+        svars<-NULL
+     } #
+
+
+
+    switch(opt$preproc,
+           none={Xp<-X},
+           auto={Xp<-X./repmat(std(X), ntot, 1)},
+           pareto={Xp<-X./repmat(sqrt(std(X)),ntot, 1)}
+    )
+    switch (ascamodel$Options$bootsave,
+        all={
+            eval(parse(text=paste0('bmodel$X', l, '$SCA$Bootstrap$Loadings<-Pb ')))
+            eval(parse(text=paste0('bmodel$X', l, '$SCA$Bootstrap$ConfIntervals<-Pbcrit ')))
+            eval(parse(text=paste0('bmodel$X', l, '$SCA$Bootstrap$SignificantVariables<-svars ')))
+},
+        confint={
+            eval(parse(text=paste0('bmodel$X', l, '$SCA$Bootstrap$Loadings<-[] ')))
+            eval(parse(text=paste0('bmodel$X', l, '$SCA$Bootstrap$ConfIntervals<-Pbcrit ')))
+            eval(parse(text=paste0('bmodel$X', l, '$SCA$Bootstrap$SignificantVariables<-svars ')))
+},
+        signvars={
+            eval(parse(text=paste0('bmodel$X', l, '$SCA$Bootstrap$Loadings<-[] ')))
+            eval(parse(text=paste0('bmodel$X', l, '$SCA$Bootstrap$ConfIntervals<-[] ')))
+            eval(parse(text=paste0('bmodel$X', l, '$SCA$Bootstrap$SignificantVariables<-svars ')))
+}
+     ) #
+
+ } #
+return(bmodel)
+}
+
+
 # #########################################################
-# bootload <-function(Xd,Dd, Pd, confl, nboot) {
-# #Bootstrap
-#
-# sl<-(confl+1)/2
-# ll<-1-sl
-# svars<-cell(1,size(Pd,2))
-#
-# Pb<-matrix(0,[nboot size(Pd)])
-#
-# bootp<-matrix(0,size(Xd,1),1)
-# lev<-unique(Dd, 'rows')
-#
-# for ( i in 1 : nboot) {
-#     for ( j in 1 : nrow(lev,1)) {
-#         xx<-find(ismember(Dd, lev[j,], 'rows')==1)
-#         yy<-ceil(length(xx)*rand(1,length(xx)))
-#         bootp(xx)<-xx(yy)
-#      } #
-#     Xboot<-Xd[bootp,]
-#     Xdp<-Dd*pinv(Dd)*Xboot
-#     [~,~,vb]<-svds(Xdp,size(Pd,2))
-#     [~,Pb(i,:,:)]<-orth.proc(Pd,vb)
-#  } #
-# Pb<-sort(Pb)
-# Pbcrit<-Pb[[ceil(ll*nboot) ceil(sl*nboot)],,]
-#
-# for ( i in 1 : length(svars)) {
-#     svars[[i]]<-find(sign(squeeze(Pbcrit[1,,i]*Pbcrit[2,,i]))==1)
-#  } #
-#
-# return(list([Pb, Pbcrit,svars]))
-# }
+bootload <-function(Xd,Dd, Pd, confl, nboot) {
+#Bootstrap
+
+sl<-(confl+1)/2
+ll<-1-sl
+svars<-list(ncol(Pd))
+
+Pb<- array(0, c(nboot, nrow(Pd), ncol(Pd))) # Pb=zeros([nboot size(Pd)]);
+
+bootp<-matrix(0,nrow(Xd))
+lev<-unique(Dd, 'rows')
+
+for ( i in 1 : nboot) {
+    for ( j in 1 : nrow(lev,1)) {
+        xx<-which(is.element(Dd, lev[j,], 'rows')==1)
+        yy<-ceiling(length(xx)*sample(length(xx)))  # rand(1,length(xx)))
+        bootp(xx)<-xx[yy]
+     } #
+    Xboot<-Xd[bootp,]
+    Xdp<-Dd %*% ginv(Dd) %*% Xboot
+    rsvd<-svd(Xdp,ncol(Pd))  # [~,~,vb]<-svds(Xdp,size(Pd,2))
+    resOrth.proc<-orth.proc(Pd,rsvd$v)
+    Pb[i,,]=resOrth.proc$yrot
+ } #
+Pb<-sort(Pb)
+Pbcrit<-Pb[c(ceiling(ll*nboot),ceiling(sl*nboot)),,]
+
+for ( i in 1 : length(svars)) {
+    svars[[i]]<-which(sign(drop(Pbcrit[1,i]*Pbcrit[2,i]))==1)
+ } #
+
+return(list(Pb, Pbcrit,svars))
+}
 #
 # ############################################################
-# orth.proc <-function(x,y) {
-# #computes orthogonal procrustes rotation projecting matrix y onto the
-# #subspace spanned by matrix x.
-# # syntax: [r,yrot]<-orth.proc(x,y)
-# # where r is the rotation matrix and yrot is the procrustes rotated y
-#
-# [u,~,v]<-svd(t(y)*x, 0)
-# r<-u*t(v)
-# yrot<-y*r
-#
-# return(list(r,yrot))
-#  }
-#
+orth.proc <-function(x,y) {
+#computes orthogonal procrustes rotation projecting matrix y onto the
+#subspace spanned by matrix x.
+# syntax: [r,yrot]<-orth.proc(x,y)
+# where r is the rotation matrix and yrot is the procrustes rotated y
+
+  rsvd<-svd(t(y)*x, 0)
+
+r<-rsvd$u*t(rsvd$v)
+yrot<-y*r
+
+return(list(r,yrot))
+ }
+
