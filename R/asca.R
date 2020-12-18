@@ -81,7 +81,7 @@ if (nargin==1 && strcmp(args[[1]], 'options')) {
     opt$reducedmodel<-'standard'
     opt$permtest<-'on'
     opt$permfacts<-'all'
-    opt$nperm<-10000
+    opt$nperm<-1000
     opt$bootstrap<-'off'
     opt$bootmatrix<-'original'
     opt$bootsave<-'confint'
@@ -97,7 +97,7 @@ if (nargin==1 && strcmp(args[[1]], 'options')) {
     opt$reducedmodel<-'standard'
     opt$permtest<-'on'
     opt$permfacts<-'all'
-    opt$nperm<-10000
+    opt$nperm<-1000
     opt$bootstrap<-'off'
     opt$bootmatrix<-'original'
     opt$bootsave<-'confint'
@@ -164,7 +164,6 @@ model$XRes$TermOrder<-max(desorder)+1
 
 for ( i in 2 : length(dmatrices)) {
     l<-deslabels[[i]]
-
     if (is.character(opt$reducedmodel) && opt$reducedmodel=='standard') {
         if (i==2) {
           remfact<-desterms[(i+1):length(desterms)]
@@ -178,7 +177,7 @@ for ( i in 2 : length(dmatrices)) {
      } #
     Xx<-model$Xdata$CenteredData
     for ( j in 1 : length(remfact)) {
-        m<-LETTERS[remfact[[j]]]
+        m<-paste0(LETTERS[remfact[[j]]],collapse ="")
         eval(parse(text=paste0('Xx<-Xx-model$X',m,'$EffectMatrix')))
      } #
     eval(parse(text=paste0('model$X', l,'$ReducedMatrix<-Xx')))
