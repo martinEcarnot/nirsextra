@@ -88,7 +88,7 @@ library(MASS)
           ssqp<-ptest(Xr,Dr, ascamodel$Options$nperm)
           eval(parse(text=paste0('seff<-ascamodel$X', l, '$EffectSSQ ')))
           p<-length(which(ssqp>=seff))/ascamodel$Options$nperm
-          if (p<<-0.05) {
+          if (p<=0.05) {
             sc<-sc+1
             signfacts[[sc]]<-l
           }
@@ -101,8 +101,8 @@ library(MASS)
             eval(parse(text=paste0('Dr<-ascamodel$X', l, '$DesignMatrix ')))
             ssqp<-ptest(Xr,Dr, ascamodel$Options$nperm)
             eval(parse(text=paste0('seff<-ascamodel$X', l, '$EffectSSQ ')))
-            p<-length(find(ssqp>=seff))/ascamodel$Options$nperm
-            if (p<<-0.05) {
+            p<-length(which(ssqp>=seff))/ascamodel$Options$nperm
+            if (p<=0.05) {
               sc<-sc+1
               signfacts[[sc]]<-l
             }
@@ -227,19 +227,19 @@ library(MASS)
       )
       switch (ascamodel$Options$bootsave,
               all={
-                eval(parse(text=paste0('bmodel$X', l, '$SCA$Bootstrap$Loadings<-Pb ')))
-                eval(parse(text=paste0('bmodel$X', l, '$SCA$Bootstrap$ConfIntervals<-Pbcrit ')))
-                eval(parse(text=paste0('bmodel$X', l, '$SCA$Bootstrap$SignificantVariables<-svars ')))
+                eval(parse(text=paste0('bmodel$X', l, '$SCA$Bootstrap$Loadings<-Pb')))
+                eval(parse(text=paste0('bmodel$X', l, '$SCA$Bootstrap$ConfIntervals<-Pbcrit')))
+                eval(parse(text=paste0('bmodel$X', l, '$SCA$Bootstrap$SignificantVariables<-svars')))
               },
               confint={
-                eval(parse(text=paste0('bmodel$X', l, '$SCA$Bootstrap$Loadings<-NULL ')))
-                eval(parse(text=paste0('bmodel$X', l, '$SCA$Bootstrap$ConfIntervals<-Pbcrit ')))
+                eval(parse(text=paste0('bmodel$X', l, '$SCA$Bootstrap$Loadings<-NULL')))
+                eval(parse(text=paste0('bmodel$X', l, '$SCA$Bootstrap$ConfIntervals<-Pbcrit')))
                 eval(parse(text=paste0('bmodel$X', l, '$SCA$Bootstrap$SignificantVariables<-svars ')))
               },
               signvars={
-                eval(parse(text=paste0('bmodel$X', l, '$SCA$Bootstrap$Loadings<-NULL ')))
-                eval(parse(text=paste0('bmodel$X', l, '$SCA$Bootstrap$ConfIntervals<-NULL ')))
-                eval(parse(text=paste0('bmodel$X', l, '$SCA$Bootstrap$SignificantVariables<-svars ')))
+                eval(parse(text=paste0('bmodel$X', l, '$SCA$Bootstrap$Loadings<-NULL')))
+                eval(parse(text=paste0('bmodel$X', l, '$SCA$Bootstrap$ConfIntervals<-NULL')))
+                eval(parse(text=paste0('bmodel$X', l, '$SCA$Bootstrap$SignificantVariables<-svars')))
               }
       )
     }
@@ -365,8 +365,8 @@ desorder=ldmatrices$desorder
 Xd<-Xp
 
 for ( i in 1 : length(dmatrices)) {
-    Xeff<-dmatrices[[i]] %*% ginv(dmatrices[[i]]) %*%Xd
-    ssqEff<-sum(sum(Xeff^2))
+  Xeff<-dmatrices[[i]] %*% ginv(dmatrices[[i]]) %*%Xd
+  ssqEff<-sum(sum(Xeff^2))
     Xd<-Xd-Xeff
     l<-deslabels[[i]]
     eval(parse(text=paste0('model$X', l,'$EffectMatrix<-Xeff')))
