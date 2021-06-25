@@ -110,13 +110,13 @@ library(MASS)
             eval(parse(text=paste0('pmodel$X',l,'$EffectSignif$NullDistr<-ssqp')))
             eval(parse(text=paste0('pmodel$X',l,'$EffectSignif$p<-p')))
           }else{
-            eval(parse(text=paste0('pmodel$X',l,'$EffectSignif$NullDistr<-NULL]')))
+            eval(parse(text=paste0('pmodel$X',l,'$EffectSignif$NullDistr<-NULL')))
             eval(parse(text=paste0('pmodel$X',l,'$EffectSignif$p<-NULL')))
           }
         }
       }else{
-        eval(parse(text=paste0('pmodel$X',l,'$EffectSignif$NullDistr<-[]')))
-        eval(parse(text=paste0('pmodel$X',l,'$EffectSignif$p<-[]')))
+        eval(parse(text=paste0('pmodel$X',l,'$EffectSignif$NullDistr<-NULL')))
+        eval(parse(text=paste0('pmodel$X',l,'$EffectSignif$p<-NULL')))
       }
     }
 
