@@ -365,7 +365,8 @@ desorder=ldmatrices$desorder
 Xd<-Xp
 
 for ( i in 1 : length(dmatrices)) {
-  Xeff<-dmatrices[[i]] %*% ginv(dmatrices[[i]]) %*%Xd
+  print(i)
+  Xeff<-dmatrices[[i]] %*% ginv(dmatrices[[i]]) %*% Xd
   ssqEff<-sum(sum(Xeff^2))
     Xd<-Xd-Xeff
     l<-deslabels[[i]]
