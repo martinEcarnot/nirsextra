@@ -110,13 +110,13 @@ library(MASS)
             eval(parse(text=paste0('pmodel$X',l,'$EffectSignif$NullDistr<-ssqp')))
             eval(parse(text=paste0('pmodel$X',l,'$EffectSignif$p<-p')))
           }else{
-            eval(parse(text=paste0('pmodel$X',l,'$EffectSignif$NullDistr<-NULL]')))
+            eval(parse(text=paste0('pmodel$X',l,'$EffectSignif$NullDistr<-NULL')))
             eval(parse(text=paste0('pmodel$X',l,'$EffectSignif$p<-NULL')))
           }
         }
       }else{
-        eval(parse(text=paste0('pmodel$X',l,'$EffectSignif$NullDistr<-[]')))
-        eval(parse(text=paste0('pmodel$X',l,'$EffectSignif$p<-[]')))
+        eval(parse(text=paste0('pmodel$X',l,'$EffectSignif$NullDistr<-NULL')))
+        eval(parse(text=paste0('pmodel$X',l,'$EffectSignif$p<-NULL')))
       }
     }
 
@@ -365,7 +365,7 @@ desorder=ldmatrices$desorder
 Xd<-Xp
 
 for ( i in 1 : length(dmatrices)) {
-  Xeff<-dmatrices[[i]] %*% ginv(dmatrices[[i]]) %*%Xd
+  Xeff<-dmatrices[[i]] %*% ginv(dmatrices[[i]]) %*% Xd
   ssqEff<-sum(sum(Xeff^2))
     Xd<-Xd-Xeff
     l<-deslabels[[i]]

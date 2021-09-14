@@ -14,7 +14,7 @@ pred=as.factor(pred)
 
 nlev=nlevels(as.factor(obs))
 cat("\nGlobal\n")
-t=table(Classes_Obs=obs,Classes_pred=pred)
+t=table(obs,pred)
 disp=cbind(t,make_pbc(t,nlev))
 rownames(disp)=c("Classes_Obs",rep("",nlev-1))
 colnames(disp)=c("Classes_pred","","","")
