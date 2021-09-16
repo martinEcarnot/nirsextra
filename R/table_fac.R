@@ -1,6 +1,6 @@
 table_fac = function (obs,pred,fac) {
 
-library(dplyr)
+# library(dplyr)
 
 # Fonction pour afficher le % de bien classe dans une matrice de mm dim que la table de contingence
 make_pbc= function(tabl,nlev) {
