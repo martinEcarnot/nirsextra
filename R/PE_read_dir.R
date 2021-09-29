@@ -1,4 +1,4 @@
-PE_read_dir <- function(d,nlo)
+PE_read_dir <- function(d,nlo, printn=F)
 {
   # Reading PE files on a directory
   #
@@ -8,7 +8,7 @@ PE_read_dir <- function(d,nlo)
   x=matrix(, nrow = length(l), ncol = nlo)
 
   for (i in 1:length(l)) {
-    print(l[i])
+    if(printn) {print(l[i])}
     sp=readSP.pe(l[i])
     x[i,]=sp$yData
   }
