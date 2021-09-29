@@ -1,3 +1,14 @@
+#' Table_fac
+#'
+#' @param obs
+#' @param pred
+#' @param fac
+#'
+#' @return
+#' @export
+#' @import dplyr
+#'
+#' @examples
 table_fac = function (obs,pred,fac) {
 
 # Fonction pour afficher le % de bien classe dans une matrice de mm dim que la table de contingence
