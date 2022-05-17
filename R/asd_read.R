@@ -39,7 +39,9 @@ fi <- file(f, "rb")
 
 #result <- data.frame(spectrumheaderco=readChar(fi,3,useBytes=TRUE))
 result$spectrumheaderco <- readChar(fi,3,useBytes=TRUE)
-result$spectrumheadercomments <- readBin(fi, what = character(), size = 157, endian = "little") #readChar(fi,157,useBytes=TRUE) # rawToChar(readBin(fi,"raw",157))
+result$spectrumheadercomments <- readBin(fi, what = character(), size = 157, endian = "little") #
+# result$spectrumheadercomments <-readChar(fi,157,useBytes=TRUE) # rawToChar(readBin(fi,"raw",157))
+seek(fi,where = 160)
 
 #load up the struct tm object.
 result$spectrumheaderwhensec <- readBin(fi, integer(),1,2)
@@ -71,9 +73,13 @@ result$spectrumheaderwchannels <- readBin(fi, integer(),1,2)
 
 #load up the app_data
 result$spectrumheaderapp_data <- readBin(fi, what = character(), size = 128, endian = "little") #readChar(fi,128,useBytes=TRUE)  #rawToChar(readBin(fi,"raw",128))
+seek(fi,where = 334)
+# result$spectrumheaderapp_data <- readChar(fi,128,useBytes=TRUE)
 
 #load up the GPS data.  NOTE: not used!
 result$spectrumheadergps_data <- readBin(fi, what = character(), size = 56, endian = "little") #readChar(fi,56,useBytes=TRUE)  #rawToChar(readBin(fi,"raw",56))
+seek(fi,where = 390)
+# result$spectrumheadergps_data <-readChar(fi,56,useBytes=TRUE)
 
 #load up more header fields.
 result$spectrumheaderit <- readBin(fi, integer(),1,4)
@@ -99,8 +105,13 @@ result$spectrumheaderswir1_offset <- readBin(fi, integer(),1,2)
 result$spectrumheaderswir2_offset <- readBin(fi, integer(),1,2)
 result$spectrumheadersplice1_wavelength <- readBin(fi, numeric(),1,4)
 result$spectrumheadersplice2_wavelength <- readBin(fi, numeric(),1,4)
-result$spectrumheaderwhen_in_ms <- readBin(fi, what = character(), size = 12, endian = "little") #readChar(fi,12,useBytes=TRUE)  #rawToChar(readBin(fi,"raw",12))
-result$spectrumheaderspare <- readBin(fi, what = character(), size = 20, endian = "little") #readChar(fi,20,useBytes=TRUE)  #rawToChar(readBin(fi,"raw",20))
+result$spectrumheaderwhen_in_ms <- readBin(fi, what = character(), size = 12, endian = "little") #
+# result$spectrumheaderwhen_in_ms <-readChar(fi,12,useBytes=TRUE)  #rawToChar(readBin(fi,"raw",12))
+seek(fi,where = 464)
+
+result$spectrumheaderspare <- readBin(fi, what = character(), size = 20, endian = "little") #
+# result$spectrumheaderspare <-readChar(fi,20,useBytes=TRUE)  #rawToChar(readBin(fi,"raw",20))
+seek(fi,where = 484)
 
 
 #########################################################
