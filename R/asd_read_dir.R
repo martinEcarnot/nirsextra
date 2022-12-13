@@ -1,4 +1,4 @@
-asd_read_dir <- function(d,times=F, comments=F)
+asd_read_dir <- function(d,times=F, comments=F, type=F)
 {
   # Reading ASD files on a directory
   #
@@ -11,7 +11,13 @@ com=NULL
 for (i in 1:length(l)) {
   # x[i,]=get_spectra(l[i], type = "reflectance")
   sp=asd_read(l[i])
-  x[i,]=sp$spectrum/sp$reference
+  if (type=="l") {
+    x[i,]=sp$spectrum
+  } else if(type=="ref") {
+    x[i,]=sp$reference
+  } else {
+    x[i,]=sp$spectrum/sp$reference
+  }
   # x[i,]=sp$spectrum
   if (times) {
   t1=paste(sp$info$spectrumheaderwhensec,sp$info$spectrumheaderwhenmin,sp$info$spectrumheaderwhenhour,sp$info$spectrumheaderwhenmday,sp$info$spectrumheaderwhenmon,sp$info$spectrumheaderwhenyear)

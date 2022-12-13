@@ -9,9 +9,6 @@ table_fac(obs, pred, fac)
 \arguments{
 \item{fac}{}
 }
-\value{
-
-}
 \description{
 Table_fac
 }

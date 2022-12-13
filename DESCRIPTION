@@ -6,12 +6,12 @@ Authors@R: person(given = "Martin",
            role = c("aut", "cre"),
            email = "martin.ecarnot@inrae.fr",
            comment = c(ORCID = "YOUR-ORCID-ID"))
-Description: Misc. function for NIRS & chemometrics. Created from https://thinkr.fr/creer-package-r-quelques-minutes/
+Description: Misc. function for NIRS & chemometrics. Created from https://thinkr.fr/creer-package-r-quelques-minutes/.
 License: Toutegratos
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.1.1
+RoxygenNote: 7.2.1
 Imports: 
     rnirs,
     dplyr,
