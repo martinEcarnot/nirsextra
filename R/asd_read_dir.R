@@ -21,7 +21,7 @@ for (i in 1:length(l)) {
   # x[i,]=sp$spectrum
   if (times) {
   t1=paste(sp$info$spectrumheaderwhensec,sp$info$spectrumheaderwhenmin,sp$info$spectrumheaderwhenhour,sp$info$spectrumheaderwhenmday,sp$info$spectrumheaderwhenmon,sp$info$spectrumheaderwhenyear)
-  tim=rbind(tim,as.POSIXct(t1, format = "%S %M %H %d %m %y",origin = "1960-01-01"))
+  tim=rbind(tim,as.POSIXct(t1, format = "%S %M %H %d %m %Y"))
   }
   if (comments) {com=rbind(com,sp$info$spectrumheadercomments)}
 }
