@@ -47,9 +47,9 @@ seek(fi,where = 160)
 result$spectrumheaderwhensec <- readBin(fi, integer(),1,2)
 result$spectrumheaderwhenmin <- readBin(fi, integer(),1,2)
 result$spectrumheaderwhenhour <- readBin(fi, integer(),1,2)
-result$spectrumheaderwhenmday <- readBin(fi, integer(),1,2)
-result$spectrumheaderwhenmon <- readBin(fi, integer(),1,2)
-result$spectrumheaderwhenyear <- readBin(fi, integer(),1,2)+1900
+result$spectrumheaderwhenmday <- readBin(fi, integer(),1,2)+1
+result$spectrumheaderwhenmon <- readBin(fi, integer(),1,2)+1
+result$spectrumheaderwhenyear <- readBin(fi, integer(),1,2)+1903
 result$spectrumheaderwhenwday <- readBin(fi, integer(),1,2)
 result$spectrumheaderwhenyday <- readBin(fi, integer(),1,2)
 result$spectrumheaderwhenisdst <- readBin(fi, integer(),1,2)
