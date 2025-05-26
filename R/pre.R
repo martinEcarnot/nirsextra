@@ -52,10 +52,10 @@ pre <- function(sp,p)
   if (p[[i,1]] == 'msc') {
     if (p[[i,2]] == '') {
       sp = msc(sp)
-      str = mscmsc(matrix(rep(NA, ncol(sp)))) # create empty msc object
-      mr_attr = attributes(mr)
-      dim(mr_attr) = NULL
-      attributes(str) = mr_attr
+      # str = mscmsc(matrix(rep(NA, ncol(sp)))) # create empty msc object
+      # mr_attr = attributes(mr)
+      # dim(mr_attr) = NULL
+      # attributes(str) = mr_attr
     } # fill empty msc model with good attributes (saves memory)
     else
       sp = predict(str, sp)

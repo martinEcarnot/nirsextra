@@ -9,7 +9,7 @@ S=datref[,which(colnames(datref) %in% spname)]
   WS = S - BS;
 
 # ACP
-  rpca=pca(WS,ncomp= ncomp)  # rpca=pca(WS,ncomp= qr(WS)$rank)
+  rpca=pcasvd(WS,ncomp= ncomp)  # rpca=pca(WS,ncomp= qr(WS)$rank)
 loadings_error=rpca$P
 kW= loadings_error[,1:ncomp]
 

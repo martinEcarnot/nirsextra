@@ -29,7 +29,7 @@ rownames(disp)=c("Classes_Obs",rep("",nlev-1))
 colnames(disp)=c("Classes_pred","","","")
 print(disp,quote=F)
 
-# ls=lapply(seg,FUN=function(x) {lapply(x,FUN=sort)}) # renge les indices de seg ds le mm ordre que la sortie de fitcv
+# ls=lapply(seg,FUN=function(x) {lapply(x,FUN=sort)}) # range les indices de seg ds le mm ordre que la sortie de fitcv
 
 nfac=ncol(fac)
 for (i in 1:nfac) {
@@ -43,7 +43,6 @@ for (i in 1:nfac) {
     disp=cbind(disp,t,make_pbc(t,nlev))
     cname=c(cname,"Pred","",levels(fac1)[j],"")  # c(cname,"Classes_pred","",levels(fac1)[j],"")
   }
-  # browser()
   rownames(disp)=c("Obs",rep("",nlev-1))  # c("Classes_Obs",rep("",nlev-1))
   colnames(disp)=cname #rep(c("Classes_pred","","",""),nlevels(fac1))
   cat("\n\nFacteur: ",colnames(fac)[i]," \n\n")
