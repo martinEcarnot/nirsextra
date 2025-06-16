@@ -6,7 +6,7 @@ gcv <- function(X, Y, segm, score, fun, pars, verb = TRUE) {
   nco <- length(pars[[1]])
   for(i in seq_len(nrep)) {
     if(verb)
-      cat("/ rep=", i, " ", sep = "")   
+      cat("/ rep=", i, " ", sep = "")
     listsegm <- segm[[i]]
     nsegm <- length(listsegm)
     zres <- vector("list", length = nsegm)
@@ -16,9 +16,9 @@ gcv <- function(X, Y, segm, score, fun, pars, verb = TRUE) {
       s <- sort(listsegm[[j]])
       if((is.list(X)==TRUE)&(is.matrix(X)==FALSE)&(is.data.frame(X)==FALSE)){
         zres[[j]] <- gridscore(
-          lapply(1:length(X), function(k) X[[k]][-s, , drop = FALSE]), 
+          lapply(1:length(X), function(k) X[[k]][-s, , drop = FALSE]),
           Y[-s, , drop = FALSE],
-          lapply(1:length(X), function(k) X[[k]][s, , drop = FALSE]), 
+          lapply(1:length(X), function(k) X[[k]][s, , drop = FALSE]),
           Y[s, , drop = FALSE],
           score = score, fun = fun, pars = pars)
       }else{
@@ -34,10 +34,10 @@ gcv <- function(X, Y, segm, score, fun, pars, verb = TRUE) {
   }
   res_rep <- setDF(rbindlist(res_rep))
   if(verb)
-    cat("/ End. \n\n")    
+    cat("/ End. \n\n")
   namy <- colnames(Y)
-  nampar <- names(pars) 
-  res <- aggregate(res_rep[, namy, drop = FALSE], 
+  nampar <- names(pars)
+  res <- aggregate(res_rep[, namy, drop = FALSE],
                    by = res_rep[, nampar, drop = FALSE], FUN = mean)
   list(val = res, val_rep = res_rep)
 }
@@ -48,10 +48,10 @@ gcvlv <- function(X, Y, segm, score, fun, nlv, pars = NULL, verb = TRUE) {
   nrep <- length(segm)
   res_rep <- vector("list", length = nrep)
   nlv <- seq(min(nlv), max(nlv))
-  le_nlv <- length(nlv) 
+  le_nlv <- length(nlv)
   for(i in seq_len(nrep)) {
     if(verb)
-      cat("/ rep=", i, " ", sep = "")     
+      cat("/ rep=", i, " ", sep = "")
     listsegm <- segm[[i]]
     nsegm <- length(listsegm)
     zres <- vector("list", length = nsegm)
@@ -63,7 +63,7 @@ gcvlv <- function(X, Y, segm, score, fun, nlv, pars = NULL, verb = TRUE) {
         zres[[j]] <- gscorelv_mec(
           lapply(1:length(X), function(k) X[[k]][-s, , drop = FALSE]),
           Y[-s, , drop = FALSE],
-          lapply(1:length(X), function(k) X[[k]][s, , drop = FALSE]), 
+          lapply(1:length(X), function(k) X[[k]][s, , drop = FALSE]),
           Y[s, , drop = FALSE],
           score = score, fun = fun, nlv = nlv, pars = pars)
       }else{
@@ -73,14 +73,11 @@ gcvlv <- function(X, Y, segm, score, fun, nlv, pars = NULL, verb = TRUE) {
           score = score, fun = fun, nlv = nlv, pars = pars)
       }
     }
-    
+
     yp_list <- lapply(zres, function(x) x$yp)
     ypred <- do.call(rbind, yp_list)
-    zres <- lapply(zres, function(x) {
-      x$yp <- NULL
-      return(x)
-    })
-  
+
+    zres = lapply(zres, `[[`, "res")
     zres <- setDF(rbindlist(zres))
     ## Case where pars is empty
     if(is.null(pars)) {
@@ -96,10 +93,10 @@ gcvlv <- function(X, Y, segm, score, fun, nlv, pars = NULL, verb = TRUE) {
   }
   res_rep <- setDF(rbindlist(res_rep))
   if(verb)
-    cat("/ End. \n\n")        
+    cat("/ End. \n\n")
   namy <- colnames(Y)
-  nampar <- c("nlv", names(pars)) 
-  res <- aggregate(res_rep[, namy, drop = FALSE], 
+  nampar <- c("nlv", names(pars))
+  res <- aggregate(res_rep[, namy, drop = FALSE],
                    by = res_rep[, nampar, drop = FALSE], FUN = mean)
   list(val = res, val_rep = res_rep, ypred=ypred)
 }
@@ -111,10 +108,10 @@ gridcvlb <- function(X, Y, segm, score, fun, lb, pars = NULL, verb = TRUE) {
   nrep <- length(segm)
   res_rep <- vector("list", length = nrep)
   lb <- sort(unique(lb))
-  le_lb <- length(lb) 
+  le_lb <- length(lb)
   for(i in seq_len(nrep)) {
     if(verb)
-      cat("/ rep=", i, " ", sep = "")     
+      cat("/ rep=", i, " ", sep = "")
     listsegm <- segm[[i]]
     nsegm <- length(listsegm)
     zres <- vector("list", length = nsegm)
@@ -124,9 +121,9 @@ gridcvlb <- function(X, Y, segm, score, fun, lb, pars = NULL, verb = TRUE) {
       s <- sort(listsegm[[j]])
       if((is.list(X)==TRUE)&(is.matrix(X)==FALSE)&(is.data.frame(X)==FALSE)){
         zres[[j]] <- gridscorelb(
-          lapply(1:length(X), function(k) X[[k]][-s, , drop = FALSE]), 
+          lapply(1:length(X), function(k) X[[k]][-s, , drop = FALSE]),
           Y[-s, , drop = FALSE],
-          lapply(1:length(X), function(k) X[[k]][s, , drop = FALSE]), 
+          lapply(1:length(X), function(k) X[[k]][s, , drop = FALSE]),
           Y[s, , drop = FALSE],
           score = score, fun = fun, lb = lb, pars = pars)
       }else{
@@ -151,10 +148,11 @@ gridcvlb <- function(X, Y, segm, score, fun, lb, pars = NULL, verb = TRUE) {
   }
   res_rep <- setDF(rbindlist(res_rep))
   if(verb)
-    cat("/ End. \n\n")        
+    cat("/ End. \n\n")
   namy <- colnames(Y)
-  nampar <- c("lb", names(pars)) 
-  res <- aggregate(res_rep[, namy, drop = FALSE], 
+  nampar <- c("lb", names(pars))
+  res <- aggregate(res_rep[, namy, drop = FALSE],
                    by = res_rep[, nampar, drop = FALSE], FUN = mean)
   list(val = res, val_rep = res_rep)
 }
+
