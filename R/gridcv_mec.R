@@ -2,7 +2,25 @@
 #'
 #' Reprende gridcv, mais utilise les foncions gcv et gcvlv au lieu de gridcv et gridcvlv
 #'
+#' @import data.table
 #' @export
+
+
+.mat <- function(X, prefix = NULL) {
+  if(is.vector(X))
+    X <- matrix(X, ncol = 1)
+  if(!is.matrix(X))
+    X <- as.matrix(X)
+  if(is.null(row.names(X)))
+    row.names(X) <- seq_len(dim(X)[1])
+  if(is.null(prefix)) {
+    if(is.null(colnames(X)))
+      colnames(X) <- paste("x", seq_len(dim(X)[2]), sep = "")
+  }
+  else
+    colnames(X) <- paste(prefix, seq_len(dim(X)[2]), sep = "")
+  X
+}
 
 
 gcv <- function(X, Y, segm, score, fun, pars, verb = TRUE) {
