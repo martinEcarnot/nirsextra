@@ -1,3 +1,10 @@
+#' gridcv_mec
+#'
+#' Reprende gridcv, mais utilise les foncions gcv et gcvlv au lieu de gridcv et gridcvlv
+#'
+#' @export
+
+
 gcv <- function(X, Y, segm, score, fun, pars, verb = TRUE) {
   ## pars = List of named vectors (arguments) involved in the calculation of the score
   Y <- .mat(Y, "y")

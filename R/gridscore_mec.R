@@ -1,3 +1,10 @@
+#' gridscore_mec
+#'
+#' Reprende gridscore, mais utilise les foncions gscore_mec et gscorelv_mec au lieu de gscore et gscorelv
+#'
+#' @export
+
+
 
 gscore_mec <- function(Xtrain, Ytrain, X, Y, score, fun, pars, verb = FALSE) {
   ## pars = List of named vectors (arguments) involved in the calculation of the score
