@@ -1,4 +1,4 @@
 
 exportPattern("^[[:alpha:]]+")
-import(dplyr, data.table)
+import(dplyr, data.table, rchemo)
 
