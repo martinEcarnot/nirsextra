@@ -61,7 +61,7 @@ gscorelv_mec <- function(Xtrain, Ytrain, X, Y, score, fun, nlv, pars = NULL, ver
   q <- dim(Ytrain)[2]
   nlv <- seq(min(nlv), max(nlv))
   le_nlv <- length(nlv)
-  ypred = data.frame()
+  y = data.frame()
   ## Case where pars is NULL
   if(is.null(pars)) {
     if(verb)
@@ -73,12 +73,13 @@ gscorelv_mec <- function(Xtrain, Ytrain, X, Y, score, fun, nlv, pars = NULL, ver
     res <- matrix(nrow = le_nlv, ncol = q)
     for(i in seq_len(le_nlv)) {
       res[i, ] <- score(pred[[i]], Y)
-      ypred=rbind(ypred,cbind(rep(i,n),rownames(Y),pred[[i]]))
+      y=rbind(y,cbind(rep(i,n),rownames(Y),pred[[i]],Y))
     }
     colnames(res) <- colnames(Ytrain)
-    colnames(ypred) = c("nlv","rowname","y1")
+    colnames(y) = c("nlv","rowname","yp","yref")
+    y <- mutate(y,across(c("nlv","yp","yref"), as.numeric))
     res <- data.frame(nlv = nlv, res, stringsAsFactors = FALSE)
-    res2 <- list(res=res, yp=ypred)
+    res2 <- list(res=res, y=y)
     return(res2)
   }
   ## End
@@ -101,16 +102,18 @@ gscorelv_mec <- function(Xtrain, Ytrain, X, Y, score, fun, nlv, pars = NULL, ver
       zres <- matrix(nrow = le_nlv, ncol = q)
       for(j in seq_len(le_nlv)) {
         zres[j, ] <- score(zpred[[j]], Y)
-        ypred=rbind(ypred,cbind(rep(j,n),rownames(Y),rep(pars[[1]][i],n),zpred[[i]]))
+        y=rbind(y,cbind(rep(j,n),rownames(Y),rep(pars[[1]][i],n),zpred[[i]],Y))
       }
       colnames(zres) <- colnames(Ytrain)
-      head(ypred)
+      head(y)
       zres <- data.frame(nlv = nlv, zres, stringsAsFactors = FALSE)
       res[[i]] <- suppressWarnings(data.frame(zpars, zres))
     }
-    colnames(ypred) = c("nlv","rowname","pars",colnames(Ytrain))
+    browser()
+    colnames(y) = c("nlv","rowname","pars",colnames(Ytrain),"yref")
+    df <- df %>% mutate(across(c(a, b, c), as.numeric))
     # res=setDF(rbindlist(res))
-    res2 <- list(res=setDF(rbindlist(res)), yp=ypred)
+    res2 <- list(res=setDF(rbindlist(res)), y=y)
     return(res2)
   }
   if (verb)

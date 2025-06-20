@@ -1,12 +1,13 @@
 #' gridcv_mec
 #'
-#' Reprende gridcv, mais utilise les foncions gcv et gcvlv au lieu de gridcv et gridcvlv
+#' Reprende gridcv, mais utilise les foncions gcv et gcvlv au lieu de gridcv et gridcvlv de rchemo
+#' Ce qui permet de rajouter les prédictions pour chaque indiv
 #'
 #' @import data.table
 #' @export
 
 
-.mat <- function(X, prefix = NULL) {
+.mat <- function(X, prefix = NULL) {  # From rchemo
   if(is.vector(X))
     X <- matrix(X, ncol = 1)
   if(!is.matrix(X))
@@ -99,8 +100,8 @@ gcvlv <- function(X, Y, segm, score, fun, nlv, pars = NULL, verb = TRUE) {
       }
     }
 
-    yp_list <- lapply(zres, function(x) x$yp)
-    ypred <- do.call(rbind, yp_list)
+    y_list <- lapply(zres, function(x) x$y)
+    y <- do.call(rbind, y_list)
 
     zres = lapply(zres, `[[`, "res")
     zres <- setDF(rbindlist(zres))
@@ -123,7 +124,7 @@ gcvlv <- function(X, Y, segm, score, fun, nlv, pars = NULL, verb = TRUE) {
   nampar <- c("nlv", names(pars))
   res <- aggregate(res_rep[, namy, drop = FALSE],
                    by = res_rep[, nampar, drop = FALSE], FUN = mean)
-  list(val = res, val_rep = res_rep, ypred=ypred)
+  list(val = res, val_rep = res_rep, y=y)
 }
 
 gridcvlb <- function(X, Y, segm, score, fun, lb, pars = NULL, verb = TRUE) {
