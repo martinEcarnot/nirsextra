@@ -7,5 +7,6 @@
 .mat(X, prefix = NULL)
 }
 \description{
-Reprende gridcv, mais utilise les foncions gcv et gcvlv au lieu de gridcv et gridcvlv
+Reprende gridcv, mais utilise les foncions gcv et gcvlv au lieu de gridcv et gridcvlv de rchemo
+Ce qui permet de rajouter les prédictions pour chaque indiv
 }

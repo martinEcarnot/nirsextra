@@ -7,14 +7,15 @@
 
 mser = function(fm)  {
 
+y=fm$y
 
-  result <- df %>%
+  res <- y %>%
     group_by(nlv) %>%
     summarise(
       npred = n(),
-      sep = sep(y1),
-      med = median(y1),
-      ecart_type = sd(y1),
+      sep = sep(yp,yref),
+      cor2 = cor2(yp,yref),
+      RDP = rpd(yp,yref),
       .groups = "drop"
     ) %>%
     arrange(nlv)
