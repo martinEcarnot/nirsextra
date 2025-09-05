@@ -24,6 +24,13 @@
 }
 
 
+#' gcv
+#'
+#' comme gridcv, mais  permet de rajouter les prédictions pour chaque indiv
+#'
+#' @import data.table
+#' @export
+
 gcv <- function(X, Y, segm, score, fun, pars, verb = TRUE) {
   ## pars = List of named vectors (arguments) involved in the calculation of the score
   Y <- .mat(Y, "y")
@@ -68,6 +75,14 @@ gcv <- function(X, Y, segm, score, fun, pars, verb = TRUE) {
   list(val = res, val_rep = res_rep)
 }
 
+
+#' gcvlv
+#'
+#' comme gridcv, mais  permet de rajouter les prédictions pour chaque indiv
+#'
+#' @import data.table
+#' @export
+#'
 gcvlv <- function(X, Y, segm, score, fun, nlv, pars = NULL, verb = TRUE) {
   ## pars must not contains nlv
   Y <- .mat(Y, "y")
