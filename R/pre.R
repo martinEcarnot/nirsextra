@@ -21,15 +21,8 @@
 #'
 #'
 #' @export
-
 pre <- function(sp,p)
 {
-
-
-
-  #
-
-  # browser()
   if (missing(p)) {p=list()}
   if (length(p)<3) {dim(p)=c(1,2)}
   nt=nrow(p)
