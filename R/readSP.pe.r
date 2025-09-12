@@ -4,7 +4,6 @@
 #'
 #' @export
 #'
-
 readSP.pe <- function(filename){
 
 #% Reads in spectra from PerkinElmer block structured files.

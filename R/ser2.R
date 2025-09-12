@@ -4,8 +4,6 @@
 #'
 #' @export
 #'
-
-
 SER2 <- function(yp,yo)
 {
   R2=cor(yp,yo)^2

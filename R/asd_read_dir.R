@@ -4,7 +4,6 @@
 #'
 #' @export
 #'
-
 asd_read_dir <- function(d,times=F, comments=F, type=F)
 {
   # Reading ASD files on a directory

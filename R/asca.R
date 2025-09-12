@@ -3,7 +3,6 @@
 #' ASCA function translated from Matlab (not ell working)
 #'
 #' @export
-
 asca <-function(...)  {
 
 library(MASS)

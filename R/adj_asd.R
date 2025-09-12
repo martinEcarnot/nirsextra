@@ -7,7 +7,6 @@
 #'
 #' @export
 #'
-
 adj_asd <- function(Xi,iadj)
 {
 

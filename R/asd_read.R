@@ -3,7 +3,6 @@
 #' Read single .asd file
 #'
 #' @export
-
 asd_read <- function(f)
 {
 # Function to read .asd files.

@@ -4,7 +4,6 @@
 #'
 #' @export
 #'
-
 svm_rnirs <- function (Xr,Yr,Xu,Yu,cost=NULL, epsilon=NULL, gamma=NULL)  {
 
 

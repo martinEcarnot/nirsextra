@@ -4,7 +4,6 @@
 #'
 #' @import dplyr
 #' @export
-
 mser = function(fm)  {
 
 y=fm$y
