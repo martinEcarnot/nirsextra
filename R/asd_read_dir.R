@@ -1,3 +1,10 @@
+#' asd_read_dir
+#'
+#' Read all .asd file from repertoty
+#'
+#' @export
+#'
+
 asd_read_dir <- function(d,times=F, comments=F, type=F)
 {
   # Reading ASD files on a directory

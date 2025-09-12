@@ -1,3 +1,10 @@
+#' svm_rnirs
+#'
+#' svm_rnirs
+#'
+#' @export
+#'
+
 svm_rnirs <- function (Xr,Yr,Xu,Yu,cost=NULL, epsilon=NULL, gamma=NULL)  {
 
 

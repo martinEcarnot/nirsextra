@@ -1,27 +1,35 @@
+#' pre
+#'
+#' Effectue les prtraitements sur les spectres
+#'
+# sp =spectra, p= list of pretreatment
+
+# Liste de prtraitements	Description			Arguments
+#	'snv'		Sdandard Normal Variate			''
+# 'msc'		Multi-scater Correction			ref :1 spectre  partir duquel est calcul la correction (dfaut= mean(Xi.d))
+#	'ma'		Moving average			wsz: taille de la fenetre glissante (dfaut=3)
+#	'red'		Reduction du nbre de l.o.			[d,gap,f]: nombre de longueurs d'onde passes au dbut, pas d'chantillonnage, nombre de longueurs d'onde passes  la fin
+#	'der'		derivee				ordre de drivation  (dfaut=1)
+#	'sder'		derivee SA1SIR			[polynom_order,window_size,derivative_order]   (dfaut=[3,5,1])
+#	'adj'		ajustement des sauts de detecteurs		Longueurs d'onde auxquelles la correction doit etre faite (defaut=[651,1451])
+#	'detr'		detrend				Degr du polynome d'ajustement pour le detrend
+# 'vs'		Variance Scaling			ref :ecart-type du C-Set de reference (dfaut= std(Xi.d))
+#	'norm_rms'	Normalalisation par la moy quadratique	''
+#	'dec'		decalage des l.o.			intervale dans lequel le minimum sera trouve (def=[501 576])
+#	'ref2abs'	Passe de reflectance à l'absorbance	''
+# 'offset' rajoute un offset (def=0)
+# 'v01' Cale les spectres entre 0 et 1
+# 'del'   Enleve des morceaux de spectres (pas seulement aux bords)
+#'
+#'
+#' @export
+
 pre <- function(sp,p)
 {
 
-  # Pretreatment
-  # sp =spectra, p= list of pretreatment
 
-  # Liste de prtraitements	Description			Arguments
-  #	'snv'		Sdandard Normal Variate			''
-  # 'msc'		Multi-scater Correction			ref :1 spectre  partir duquel est calcul la correction (dfaut= mean(Xi.d))
-  #	'ma'		Moving average			wsz: taille de la fenetre glissante (dfaut=3)
-  #	'red'		Reduction du nbre de l.o.			[d,gap,f]: nombre de longueurs d'onde passes au dbut, pas d'chantillonnage, nombre de longueurs d'onde passes  la fin
-  #	'der'		derivee				ordre de drivation  (dfaut=1)
-  #	'sder'		derivee SA1SIR			[polynom_order,window_size,derivative_order]   (dfaut=[3,5,1])
-  #	'adj'		ajustement des sauts de detecteurs		Longueurs d'onde auxquelles la correction doit etre faite (defaut=[651,1451])
-  #	'detr'		detrend				Degr du polynome d'ajustement pour le detrend
-  # 'vs'		Variance Scaling			ref :ecart-type du C-Set de reference (dfaut= std(Xi.d))
-  #	'norm_rms'	Normalalisation par la moy quadratique	''
-  #	'dec'		decalage des l.o.			intervale dans lequel le minimum sera trouve (def=[501 576])
-  #	'ref2abs'	Passe de reflectance à l'absorbance	''
-  # 'offset' rajoute un offset (def=0)
-  # 'v01' Cale les spectres entre 0 et 1
-  # 'del'   Enleve des morceaux de spectres (pas seulement aux bords)
 
-  #Effectue les prtraitements sur les spectres
+  #
 
   # browser()
   if (missing(p)) {p=list()}

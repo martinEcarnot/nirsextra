@@ -1,3 +1,9 @@
+#' PE_read_dir
+#'
+#' Read PerkinElmer file
+#'
+#' @export
+
 PE_read_dir <- function(d,nlo, printn=F)
 {
   # Reading PE files on a directory

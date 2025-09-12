@@ -1,3 +1,9 @@
+#' orthEf2
+#'
+#'
+#' @export
+#'
+
 orthEf2 <- function (datref,spname,coleffet,ncomp) {
 
 # ieffet=which(colnames(datref) %in% effet)

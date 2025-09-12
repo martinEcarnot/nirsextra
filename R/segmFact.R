@@ -1,3 +1,10 @@
+#' segmFact
+#'
+#'
+#'
+#' @export
+#'
+
 segmFact <- function (dat,var=list(...),nel=list(...),nrep=1) {
 
   segm <- vector("list", length = nrep)

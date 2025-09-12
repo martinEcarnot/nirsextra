@@ -1,3 +1,9 @@
+#' orthEf
+#'
+#' Je sais meme plus ce que ça fait...
+#'
+#' @export
+
 orthEf <- function (datref,datappli,spname,coleffet,ncomp) {
 
 # ieffet=which(colnames(datref) %in% effet)

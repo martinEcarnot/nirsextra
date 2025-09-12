@@ -1,3 +1,9 @@
+#' readSP.pe
+#'
+#' Read one PerkinElmer file
+#'
+#' @export
+#'
 
 readSP.pe <- function(filename){
 

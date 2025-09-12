@@ -1,3 +1,10 @@
+#' sp2df
+#'
+#'  Integrate a matrice in a dataframe
+#'
+#' @export
+#'
+
 sp2df <- function(sp,y)
 {
   # browser()

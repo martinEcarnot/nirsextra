@@ -1,9 +1,16 @@
+#' adj_asd
+#'
+#'  # Elimine les sauts dus au passage d'un dtecteur  a un autre.
+#'  On extrapole l'ajustement linaire fait sur les [ws] points avant le saut, sur le point suivant
+#'  La diffrence entre l'ancien et le nouveau "point suivant" est soustraite a tous les points apres le "point suivant"
+#'  [651,1451]
+#'
+#' @export
+#'
+
 adj_asd <- function(Xi,iadj)
 {
-# Elimine les sauts dus au passage d'un dtecteur  a un autre.
-# On extrapole l'ajustement linaire fait sur les [ws] points avant le saut, sur le point suivant
-# La diffrence entre l'ancien et le nouveau "point suivant" est soustraite a tous les points apres le "point suivant"
-#[651,1451]
+
 ws=5
 
 for (i in 1:length(iadj)) {

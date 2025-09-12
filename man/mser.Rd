@@ -2,7 +2,7 @@
 % Please edit documentation in R/mser.R
 \name{mser}
 \alias{mser}
-\title{gridcv_mec}
+\title{mser}
 \usage{
 mser(fm)
 }

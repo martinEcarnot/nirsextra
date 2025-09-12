@@ -1,4 +1,4 @@
-#' gridcv_mec
+#' mser
 #'
 #' Computes statistics to compare prediction and reference values
 #'

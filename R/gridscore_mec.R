@@ -1,4 +1,4 @@
-#' gridscore_mec
+#' gscore_mec
 #'
 #' Reprende gridscore, mais utilise les foncions gscore_mec et gscorelv_mec au lieu de gscore et gscorelv
 #'
@@ -42,6 +42,11 @@ gscore_mec <- function(Xtrain, Ytrain, X, Y, score, fun, pars, verb = FALSE) {
   res <- data.frame(pars, res, stringsAsFactors = FALSE)
 }
 
+#' gscorelv_mec
+#'
+#' Reprende gridscore, mais utilise les foncions gscore_mec et gscorelv_mec au lieu de gscore et gscorelv
+#'
+#' @export
 gscorelv_mec <- function(Xtrain, Ytrain, X, Y, score, fun, nlv, pars = NULL, verb = FALSE) {
   ## pars = List of named vectors (arguments) involved in the calculation of the score
   ## Must not contains nlv
