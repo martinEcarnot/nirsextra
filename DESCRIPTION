@@ -20,4 +20,5 @@ Imports:
     R.utils,
     pls,
     sampling,
-    stats
+    stats,
+    spectrolab
