@@ -8,6 +8,6 @@ naturaspec2df <- function(d) {
   sp=read_spectra(d)
   x=sp$value
   colnames(x)=sp$bands
-  row.names(x)=substr(sp$names,1,nchar(sp$names)-9)
+  row.names(x)=substr(sp$names,1,nchar(sp$names)-10)
   df=sp2df(x)
 }
