@@ -115,6 +115,7 @@ gscorelv_mec <- function(Xtrain, Ytrain, X, Y, score, fun, nlv, pars = NULL, ver
     }
     # browser()
     colnames(y) = c("nlv","rowname","pars","yp","yref")
+    y <- mutate(y,across(c("nlv","yp","yref"), as.numeric))
     # res=setDF(rbindlist(res))
     res2 <- list(res=setDF(rbindlist(res)), y=y)
     return(res2)
