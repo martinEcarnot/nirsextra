@@ -114,7 +114,7 @@ gscorelv_mec <- function(Xtrain, Ytrain, X, Y, score, fun, nlv, pars = NULL, ver
       res[[i]] <- suppressWarnings(data.frame(zpars, zres))
     }
     # browser()
-    colnames(y) = c("nlv","rowname","pars",colnames(Ytrain),"yref")
+    colnames(y) = c("nlv","rowname","pars","yp","yref")
     # res=setDF(rbindlist(res))
     res2 <- list(res=setDF(rbindlist(res)), y=y)
     return(res2)
