@@ -107,13 +107,13 @@ gscorelv_mec <- function(Xtrain, Ytrain, X, Y, score, fun, nlv, pars = NULL, ver
       zres <- matrix(nrow = le_nlv, ncol = q)
       for(j in seq_len(le_nlv)) {
         zres[j, ] <- score(zpred[[j]], Y)
-        y=rbind(y,cbind(rep(j,n),rownames(Y),rep(pars[[1]][i],n),zpred[[i]],Y))
+        y=rbind(y,cbind(rep(j,n),rownames(Y),rep(pars[[1]][i],n),zpred[[j]],Y))
       }
       colnames(zres) <- colnames(Ytrain)
       zres <- data.frame(nlv = nlv, zres, stringsAsFactors = FALSE)
       res[[i]] <- suppressWarnings(data.frame(zpars, zres))
     }
-    # browser()
+
     colnames(y) = c("nlv","rowname","pars","yp","yref")
     y <- mutate(y,across(c("nlv","yp","yref"), as.numeric))
     # res=setDF(rbindlist(res))
