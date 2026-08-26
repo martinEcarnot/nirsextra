@@ -1,3 +1,14 @@
+#' adj_NaturaSpec
+#'
+#'  # Elimine les sauts dus au passage d'un dtecteur  a un autre.
+#'  On extrapole l'ajustement linaire fait sur les [ws] points avant le saut, sur les 14 points suivants
+#'  (interpolated after gap, I guess from SpectralEvolution)
+#'  La difference entre le point à gap + 15 (entre vrai spectre et fit) est soustraite a tous les points suivants
+#'  [632,?]
+#'
+#' @export
+#'
+
 adj_NaturaSpec <- function(X) {
 
   ws=5  # Number of wavelengths used for linear adjustment before gap
