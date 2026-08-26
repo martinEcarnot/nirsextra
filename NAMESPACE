@@ -3,6 +3,7 @@
 export(.mat)
 export(PE_read_dir)
 export(SER2)
+export(adj_NaturaSpec)
 export(adj_asd)
 export(asca)
 export(asd_read)
