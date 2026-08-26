@@ -6,9 +6,6 @@
 \usage{
 table_fac_rnirs(fm, dat_fac, numfac, segm, comp, rep = 1:max(fm$y$rep))
 }
-\arguments{
-\item{fac}{}
-}
 \description{
 Table_fac_rnirs
 }

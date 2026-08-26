@@ -6,9 +6,6 @@
 \usage{
 table_fac(obs, pred, fac)
 }
-\arguments{
-\item{fac}{}
-}
 \description{
 Table_fac
 }
