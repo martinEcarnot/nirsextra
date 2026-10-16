@@ -58,7 +58,7 @@ preCV = function(x,y,fun="plskern",list_pre,ncomp,titl, plotLV=TRUE, plotYY=TRUE
     fm1=fm$y[fm$y$nlv==best_pre_lo[1],]
     plot(fm1$yp,fm1$yref, xlab="NIRS prediction (CV)", ylab="Reference value")
     abline(a = 0, b = 1, col = "red", lty = 2)  # a=0, b=1 pour y=x; couleur rouge et ligne en pointillés
-    fit <- lm(fm1$yp ~ fm1$yref)
+    fit <- lm(fm1$yref ~ fm1$yp)
     abline(fit, col = "blue")
     summary_fit <- summary(fit)
     r_squared <- summary_fit$r.squared
