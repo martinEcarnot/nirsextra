@@ -13,8 +13,6 @@ preCV = function(x,y,fun="plskern",list_pre,ncomp,titl, plotLV=TRUE, plotYY=TRUE
   fmtt=list()
   fmttn=list()
   for (j in 1:length(list_pre)) {  # 1:
-    # print(paste0("Prétraitement ",j, "/",length(list_pre),"\n"))
-    if (verb) {cat(paste0("Prétraitement ", j, "/", length(list_pre), "\n"))}
     # p=rbind(list('adj',''),list('red',c(seqlo[j],2151-seqlo[j+6],1)),list('sder',c(1,3,15)))
     # print(seqlo[j])
     # print(2151-seqlo[j+4])
@@ -26,10 +24,10 @@ preCV = function(x,y,fun="plskern",list_pre,ncomp,titl, plotLV=TRUE, plotYY=TRUE
     segm <- segmkf(n = nrow(xp), K = K)
     if (fun=="lwplsr") {
       pars=mpars(nlvdis = 5, diss = "mahal", h = c(1, Inf), k = c(10, 20))
-      fmc = gcvlv(xp, y,segm,score = r2, fun = get(fun), pars=pars, nlv = 1:ncomp, verb = F)  # !!! pas cor2 avec LOO
+      fmc = gcvlv(xp, y,segm,score = r2, fun = get(fun), pars=pars, nlv = 1:ncomp, verb = FALSE)  # !!! pas cor2 avec LOO
     }
     else {
-      fmc = gcvlv(xp, y,segm,score = r2, fun = get(fun), nlv = 1:ncomp, verb = F)  # !!! pas cor2 avec LOO
+      fmc = gcvlv(xp, y,segm,score = r2, fun = get(fun), nlv = 1:ncomp, verb = FALSE)  # !!! pas cor2 avec LOO
     }
     fmtt=append(fmtt, list(fmc)) # fmttn=append(fmttn, list(fm))
     r2_tt[,j] = mser(fmc)$cor2  # r2_tt[,j] = mse(fm, ~ ncomp)$cor2
@@ -47,11 +45,14 @@ preCV = function(x,y,fun="plskern",list_pre,ncomp,titl, plotLV=TRUE, plotYY=TRUE
   }
   fm=fmtt[[best_pre_lo[2]]]  # fmn=fmttn[[best_pre_lo[2]]]
   txtpre= pftot[best_pre_lo[2]]
-  cat(
-    "Pré :", txtpre, "\n\n",
-    "R2     :", round(mser(fm)$cor2, 2), "\n\n",
-    "SEP    :", round(mser(fm)$sep, 2), "\n\n\n"
-  )
+  if (verb) {
+    cat(paste0("Prétraitement ", j, "/", length(list_pre), "\n"))
+    cat(
+      "Pré :", txtpre, "\n\n",
+      "R2     :", round(mser(fm)$cor2, 2), "\n\n",
+      "SEP    :", round(mser(fm)$sep, 2), "\n\n\n"
+    )
+  }
 
   if (plotYY) {
     fm1=fm$y[fm$y$nlv==best_pre_lo[1],]
