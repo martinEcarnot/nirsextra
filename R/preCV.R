@@ -41,9 +41,9 @@ preCV = function(x,y,fun="plskern",list_pre,ncomp,titl, plotLV=TRUE, plotYY=TRUE
   best_pre_lo=which(r2_tt == max(r2_tt[2:ncomp,]), arr.ind = TRUE)[1,]
 
   if (plotLV) {
-    matplot(r2_tt, type = 'l', lty = 1, col = 1:ncol(r2_tt), ylab="R2_Validation_Croisée", xlab="Nombre de Variables Latentes")
+    matplot(r2_tt, type = 'l', lty = 1, col = 1:ncol(r2_tt), ylab="R2_Cross-Validation", xlab="Number of Latent Variables")
     title(titl)
-    legend("bottomright", legend = pftot, col = 1:ncol(r2_tt), lty = 1, cex = 0.8,bg = "white")  #cex = 0.6
+    legend("bottomright", legend = pftot, col = 1:ncol(r2_tt), lty = 1, cex = 0.8,bg = "white")
   }
   fm=fmtt[[best_pre_lo[2]]]  # fmn=fmttn[[best_pre_lo[2]]]
   txtpre= pftot[best_pre_lo[2]]
@@ -55,14 +55,14 @@ preCV = function(x,y,fun="plskern",list_pre,ncomp,titl, plotLV=TRUE, plotYY=TRUE
 
   if (plotYY) {
     fm1=fm$y[fm$y$nlv==best_pre_lo[1],]
-    plot(fm1$yp,fm1$yref, xlab="Teneur Prédite par SPIR", ylab="Teneur Mesurée")
+    plot(fm1$yp,fm1$yref, xlab="NIRS prediction (CV)", ylab="Reference value")
     abline(a = 0, b = 1, col = "red", lty = 2)  # a=0, b=1 pour y=x; couleur rouge et ligne en pointillés
     fit <- lm(fm1$yp ~ fm1$yref)
     abline(fit, col = "blue")
     summary_fit <- summary(fit)
     r_squared <- summary_fit$r.squared
     secv=sep(fm1$yp,fm1$yref)
-    legend("topleft", legend = c("y = x", bquote(Validation_Croisée: ~ R^2 == .(round(r_squared, 2))),bquote(SECV : .(round(secv, 2))),bquote(ncomp : .(best_pre_lo[[1]])),bquote(n_ech : .(length(fm1$yref)))), col = c("red", "blue", "white", "white", "white"),lty = c(2, 1),bty = "n")
+    legend("topleft", legend = c("y = x", bquote(Cross_Validation: ~ R^2 == .(round(r_squared, 2))),bquote(SECV : .(round(secv, 2))),bquote(ncomp : .(best_pre_lo[[1]])),bquote(n_smpl : .(length(fm1$yref)))), col = c("red", "blue", "white", "white", "white"),lty = c(2, 1),bty = "n")
     title(titl)
       }
 }
